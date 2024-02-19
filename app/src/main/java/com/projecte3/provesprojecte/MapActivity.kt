@@ -1,13 +1,11 @@
 package com.projecte3.provesprojecte
 
 import android.app.AlertDialog
-import android.content.pm.PackageManager
-import android.location.GpsStatus
 import android.os.Bundle
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -22,15 +20,16 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
 
-data class Seta(var nombre: String, val latitud: Double, val longitud: Double)
+data class Seta(
+    var nombre: String,
+    var descripcion: String,
+    val latitud: Double,
+    val longitud: Double
+)
 
-class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
+class MapActivity : ComponentActivity(), MapListener {
 
     lateinit var map: MapView
     lateinit var controller: IMapController
@@ -51,8 +50,6 @@ class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
             marker.title = seta.nombre
             map.overlays.add(marker)
         }
-
-        requestLocationPermission()
 
         Configuration.getInstance().load(
             applicationContext,
@@ -78,15 +75,6 @@ class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
 
         map.overlays.add(mMyLocationOverlay)
 
-        fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-            val r = 6371 // radio de la Tierra en kilómetros
-            val dLat = Math.toRadians(lat2 - lat1)
-            val dLon = Math.toRadians(lon2 - lon1)
-            val a = sin(dLat / 2).pow(2.0) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLon / 2).pow(2.0)
-            val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-            return r * c
-        }
-
         // Crear un MapEventsReceiver
         val receiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
@@ -103,7 +91,7 @@ class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
 
                 if (closestSeta != null) {
                     // Muestra un mensaje con el nombre de la seta más cercana
-                    Toast.makeText(this@MapActivity, "La seta más cercana es ${closestSeta.nombre}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MapActivity, "La seta más cercana es ${closestSeta.nombre}, es ${closestSeta.descripcion}", Toast.LENGTH_SHORT).show()
                 }
 
                 return true
@@ -163,15 +151,22 @@ class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
         loadMarkerPreferences()
 
         map.addMapListener(this)
+
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        btnBack.setOnClickListener {
+            finish()
+        }
     }
 
-    private fun saveMarkerPreferences(lat: Double, lon: Double) {
-        val sharedPreferences = getSharedPreferences("markers", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val existingMarkers = sharedPreferences.getStringSet("locations", mutableSetOf()) ?: mutableSetOf()
-        existingMarkers.add("$lat,$lon")
-        editor.putStringSet("locations", existingMarkers)
-        editor.apply()
+    fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371 // radius of the earth in km
+        val latDistance = Math.toRadians(lat2 - lat1)
+        val lonDistance = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(latDistance / 2).pow(2.0) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(lonDistance / 2).pow(2.0)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return r * c
     }
 
     private fun loadMarkerPreferences() {
@@ -201,29 +196,5 @@ class MapActivity : ComponentActivity(), MapListener, GpsStatus.Listener {
 
     override fun onZoom(event: ZoomEvent?): Boolean {
         return false
-    }
-
-    override fun onGpsStatusChanged(event: Int) {
-        if (event == GpsStatus.GPS_EVENT_FIRST_FIX) {
-            Toast.makeText(this, "GPS fixed", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun requestLocationPermission() {
-        val permission = ContextCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            val requestPermissionLauncher =
-                registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                    if (isGranted) {
-                        Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        }
     }
 }

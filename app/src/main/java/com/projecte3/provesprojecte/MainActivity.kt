@@ -1,7 +1,10 @@
 package com.projecte3.provesprojecte
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -34,8 +37,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
+@Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +57,38 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        requestAllPermissions()
+    }
+
+    private fun requestAllPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        val allPermissionsGranted = permissions.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (!allPermissionsGranted) {
+            ActivityCompat.requestPermissions(this, permissions, 0)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0) {
+            val allPermissionsGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+            if (allPermissionsGranted) {
+                Toast.makeText(this, "Todos los permisos concedidos", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No se concedieron todos los permisos", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,13 +127,16 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
 
     when (calGo) {
         1 -> {
-            context.startActivity(Intent(context, BackActivity::class.java))
+            context.startActivity(Intent(context, CameraActivity::class.java))
         }
         2 -> {
             context.startActivity(Intent(context, MapActivity::class.java))
         }
         3 -> {
         //    context.startActivity(Intent(context, LearningActivity::class.java))
+        }
+        7 -> {
+            context.startActivity(Intent(context, BackActivity::class.java))
         }
     }
 
