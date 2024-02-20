@@ -6,6 +6,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -57,14 +59,31 @@ class CameraActivity : AppCompatActivity() {
             val name = nameEditText.text.toString()
             val description = descriptionEditText.text.toString()
 
-            // Save the data
-            saveData(name, description)
+            // Check if location is available
+            if (location != null) {
+                saveData(name, description, location!!.latitude, location!!.longitude)
+            } else {
+                // If location is not available, wait for it
+                val handler = Handler(Looper.getMainLooper())
+                val runnable = object : Runnable {
+                    override fun run() {
+                        if (location != null) {
+                            saveData(name, description, location!!.latitude, location!!.longitude)
+                        } else {
+                            // If location is still not available, wait another second
+                            handler.postDelayed(this, 1000)
+                        }
+                    }
+                }
+                // Start waiting
+                handler.postDelayed(runnable, 1000)
+            }
         }
     }
 
-    private fun saveData(name: String, description: String) {
-        val seta = Seta(name, description, location?.latitude ?: 0.0, location?.longitude ?: 0.0)
-        SetaManager.addSeta(seta)
+    private fun saveData(name: String, description: String, latitude: Double, longitude: Double) {
+        val seta = SetaManager.Seta(name, description, latitude, longitude)
+        SetaManager.addSeta(seta, this)
         Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
     }
 

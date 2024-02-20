@@ -130,7 +130,7 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
             context.startActivity(Intent(context, CameraActivity::class.java))
         }
         2 -> {
-            context.startActivity(Intent(context, MapActivity::class.java))
+            context.startActivity(Intent(context, MushroomActivity::class.java))
         }
         3 -> {
         //    context.startActivity(Intent(context, LearningActivity::class.java))
@@ -154,8 +154,8 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
                 ) {
                     Text(text = "BUSCAR", fontSize = 30.sp)
                 }
-                Button(onClick = {calGo = 2}, modifier = Modifier.padding(bottom = 10.dp)) {
-                    // abre la ventana de open street map y pone la localizacion en la que se encuentra el usuario
+                Button(onClick = {calGo = 2}, modifier = Modifier.padding(bottom = 10.dp)
+                ) {
                     Text(text = "MIS SETAS", fontSize = 30.sp)
                 }
             }

@@ -22,13 +22,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import kotlin.math.pow
 
-data class Seta(
-    var nombre: String,
-    var descripcion: String,
-    val latitud: Double,
-    val longitud: Double
-)
-
 class MapActivity : ComponentActivity(), MapListener {
 
     lateinit var map: MapView
@@ -78,7 +71,7 @@ class MapActivity : ComponentActivity(), MapListener {
         // Crear un MapEventsReceiver
         val receiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                var closestSeta: Seta? = null
+                var closestSeta: SetaManager.Seta? = null
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {
@@ -100,10 +93,10 @@ class MapActivity : ComponentActivity(), MapListener {
             // Eliminar todos los marcadores que se encuentren en la posición del punto en el que se hizo clic largo
             override fun longPressHelper(p: GeoPoint?): Boolean {
                 if (p != null) {
-                    val closestSeta = findClosestSeta(p)
+                    var closestSeta = findClosestSeta(p)
                     if (closestSeta != null) {
                         val editText = EditText(this@MapActivity)
-                        editText.setText(closestSeta.nombre)
+                        editText.setText(closestSeta!!.nombre)
 
                         AlertDialog.Builder(this@MapActivity)
                             .setTitle("Editar seta")
@@ -111,9 +104,9 @@ class MapActivity : ComponentActivity(), MapListener {
                             .setView(editText)
                             .setPositiveButton("Aceptar") { _, _ ->
                                 val newName = editText.text.toString()
-                                closestSeta.nombre = newName
+                                closestSeta = closestSeta!!.copy(nombre = newName)
                                 // Actualiza el título del marcador en el mapa
-                                val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta.latitud && it.position.longitude == closestSeta.longitud } as? Marker
+                                val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta!!.latitud && it.position.longitude == closestSeta!!.longitud } as? Marker
                                 if (marker != null) {
                                     marker.title = newName
                                     map.invalidate() // Refresca el mapa para mostrar el nuevo nombre en el marcador
@@ -127,8 +120,8 @@ class MapActivity : ComponentActivity(), MapListener {
                 return true
             }
 
-            fun findClosestSeta(p: GeoPoint): Seta? {
-                var closestSeta: Seta? = null
+            fun findClosestSeta(p: GeoPoint): SetaManager.Seta? {
+                var closestSeta: SetaManager.Seta? = null
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {

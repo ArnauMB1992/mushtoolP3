@@ -51,6 +51,7 @@ android {
 
 dependencies {
 
+    implementation("com.google.code.gson:gson:2.8.8")
     implementation("org.osmdroid:osmdroid-android:6.1.14")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
