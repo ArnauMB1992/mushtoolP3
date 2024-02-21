@@ -111,6 +111,11 @@ class MapActivity : ComponentActivity(), MapListener {
                                     marker.title = newName
                                     map.invalidate() // Refresca el mapa para mostrar el nuevo nombre en el marcador
                                 }
+                                // Actualiza el nombre de la seta en la lista de setas
+                                val setaIndex = SetaManager.setas.indexOfFirst { it.latitud == closestSeta!!.latitud && it.longitud == closestSeta!!.longitud }
+                                if (setaIndex != -1) {
+                                    SetaManager.setas[setaIndex] = closestSeta!!
+                                }
                             }
                             .setNegativeButton("Cancelar", null)
                             .show()
