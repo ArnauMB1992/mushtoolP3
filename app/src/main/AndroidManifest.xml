@@ -43,6 +43,26 @@
             android:label="El mapa de mis setas"
             android:theme="@style/Theme.ProvesProjecte3" />
         <activity
+            android:name=".LearningActivity"
+            android:theme="@style/Theme.ProvesProjecte3" />
+
+        <activity
+            android:name=".QuizActivity"
+            android:theme="@style/Theme.ProvesProjecte3"
+            />
+
+        <activity
+            android:name=".WikiSetasActivity"
+            android:theme="@style/Theme.ProvesProjecte3"
+            />
+
+        <activity
+            android:name=".com.projecte3.provesprojecte.SetaDetailActivity"
+            android:theme="@style/Theme.ProvesProjecte3"
+            />
+
+
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
