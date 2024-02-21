@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">ProvesProjecte3</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_main2">BackActivity</string>
 </resources>

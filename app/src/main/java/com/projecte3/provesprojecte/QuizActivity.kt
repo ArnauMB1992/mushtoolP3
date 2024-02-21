@@ -30,15 +30,14 @@ import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 class QuizActivity : ComponentActivity() {
     // Lista de preguntas
     private val questions = listOf(
-        Question(R.drawable.agaricusbisporus,"¿Cuál es el nombre de esta seta?", listOf("Agaricus_bisporus", "Agaricus_campestris", "Amanita_phalloides"), "Agaricus_bisporus"),
+        Question(R.drawable.agaricusxanthodermus,"¿Cuál es el nombre de esta seta?", listOf("Agaricus_Xanthodermus", "Agaricus_campestris", "Amanita_phalloides"), "Agaricus_Xanthodermus"),
         Question(R.drawable.agaricuscampestris,"¿Cuál es el nombre de esta seta?", listOf("Agaricus_campestris", "Amanita_phalloides", "Infundibulicybe_geotropa"), "Agaricus_campestris"),
         Question(R.drawable.amanitaphalloides,"¿Cuál es el nombre de esta seta?", listOf("Amanita_phalloides", "Infundibulicybe_geotropa", "Amanita_muscaria"), "Amanita_phalloides"),
         Question(R.drawable.infundibulicybegeotropa,"¿Cuál es el nombre de esta seta?", listOf("Infundibulicybe_geotropa", "Amanita_muscaria", "Calocybe_gambosa"), "Infundibulicybe_geotropa"),
         Question(R.drawable.amanitamuscaria,"¿Cuál es el nombre de esta seta?", listOf("Amanita_muscaria", "Calocybe_gambosa", "Craterellus_cornucopioides"), "Amanita_muscaria"),
         Question(R.drawable.calocybegambosa,"¿Cuál es el nombre de esta seta?", listOf("Calocybe_gambosa", "Craterellus_cornucopioides", "Leccinellum_griseum"), "Calocybe_gambosa"),
         Question(R.drawable.craterelluscornucopioides,"¿Cuál es el nombre de esta seta?", listOf("Craterellus_cornucopioides", "Leccinellum_griseum", "Psilocybe_cubensis"), "Craterellus_cornucopioides"),
-        Question(R.drawable.leccinellumgriseum,"¿Cuál es el nombre de esta seta?", listOf("Leccinellum_griseum", "Psilocybe_cubensis", "Agaricus_bisporus"), "Leccinellum_griseum"),
-        Question(R.drawable.psilocybecubensis,"¿Cuál es el nombre de esta seta?", listOf("Psilocybe_cubensis", "Agaricus_bisporus", "Agaricus_campestris"), "Psilocybe_cubensis")
+        Question(R.drawable.leccinellumgriseum,"¿Cuál es el nombre de esta seta?", listOf("Leccinellum_griseum", "Agaricus_campestris", "Agaricus_bisporus"), "Leccinellum_griseum"),
     )
     private var currentQuestionIndex = 0
     private var score = 0
