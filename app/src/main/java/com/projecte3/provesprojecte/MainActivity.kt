@@ -145,7 +145,7 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
             context.startActivity(Intent(context, MushroomActivity::class.java))
         }
         3 -> {
-        //    context.startActivity(Intent(context, LearningActivity::class.java))
+            context.startActivity(Intent(context, LearningActivity::class.java))
         }
         7 -> {
             context.startActivity(Intent(context, BackActivity::class.java))
