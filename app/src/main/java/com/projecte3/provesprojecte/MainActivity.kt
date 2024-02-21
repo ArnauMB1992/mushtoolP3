@@ -3,6 +3,7 @@ package com.projecte3.provesprojecte
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationRequest
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -39,10 +40,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationServices
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
+
 
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class MainActivity : ComponentActivity() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +68,8 @@ class MainActivity : ComponentActivity() {
             }
         }
         requestAllPermissions()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
     }
 
     private fun requestAllPermissions() {
