@@ -132,6 +132,9 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
         2 -> {
             context.startActivity(Intent(context, MushroomActivity::class.java))
         }
+        3 -> {
+        //    context.startActivity(Intent(context, WeatherActivity::class.java))
+        }
         4 -> {
             context.startActivity(Intent(context, LearningActivity::class.java))
         }
@@ -161,7 +164,7 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
             }
             Row {
                 Button(onClick = {calGo = 3}, modifier = Modifier.padding(bottom = 10.dp)) {
-                    Text(text = "COMER", fontSize = 30.sp)
+                    Text(text = "TIEMPO", fontSize = 30.sp)
                 }
                 Button(onClick = {calGo = 4}, modifier = Modifier.padding(bottom = 10.dp)) {
                     Text(text = "APRENDER", fontSize = 30.sp)

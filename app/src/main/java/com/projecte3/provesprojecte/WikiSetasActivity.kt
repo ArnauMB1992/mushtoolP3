@@ -24,43 +24,47 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projecte3.provesprojecte.com.projecte3.provesprojecte.SetaDetailActivity
+import java.text.SimpleDateFormat
 
 class WikiSetasActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mma")
+
         setContent {
             val setas = listOf(
                 Seta(
                     "Agaricus xanthodermus",
-                    null.toString(), 0.0, 0.0, R.drawable.agaricusxanthodermus
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.agaricusxanthodermus
                 ),
                 Seta(
                     "Agaricus campestris",
-                    null.toString(), 0.0, 0.0, R.drawable.agaricuscampestris
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.agaricuscampestris
                 ),
                 Seta(
                     "Amanita Muscaria",
-                    null.toString(), 0.0, 0.0, R.drawable.amanitamuscaria
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.amanitamuscaria
                 ),
                 Seta(
                     "Amanita Phalloides",
-                    null.toString(), 0.0, 0.0, R.drawable.amanitaphalloides
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.amanitaphalloides
                 ),
                 Seta(
                     "Calocybe gambosa",
-                    null.toString(), 0.0, 0.0, R.drawable.calocybegambosa
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.calocybegambosa
                 ),
                 Seta(
                     "Craterellus cornucopioides",
-                    null.toString(), 0.0, 0.0, R.drawable.craterelluscornucopioides
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.craterelluscornucopioides
                 ),
                 Seta(
                     "Infundibulicybe geotropa",
-                    null.toString(), 0.0, 0.0, R.drawable.infundibulicybegeotropa
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.infundibulicybegeotropa
                 ),
                 Seta(
                     "Leccinellumg riseum",
-                    null.toString(), 0.0, 0.0, R.drawable.leccinellumgriseum
+                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.leccinellumgriseum
                 ),
             )
 

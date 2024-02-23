@@ -40,11 +40,11 @@ class ListActivity : ComponentActivity() {
 }
 
 @Composable
-fun MushroomListScreen(mushrooms: List<SetaManager.Seta>, context: Context) {
+fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
     var showDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showOptionsDialog by remember { mutableStateOf(false) }
-    var selectedMushroom by remember { mutableStateOf<SetaManager.Seta?>(null) }
+    var selectedMushroom by remember { mutableStateOf<Seta?>(null) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -64,10 +64,11 @@ fun MushroomListScreen(mushrooms: List<SetaManager.Seta>, context: Context) {
                         )
                 ) {
                     Column {
-                        Text(text = "Name: ${mushroom.nombre}")
-                        Text(text = "Description: ${mushroom.descripcion}")
-                        Text(text = "Latitude: ${mushroom.latitud}")
-                        Text(text = "Longitude: ${mushroom.longitud}")
+                        Text(text = "Nombre: ${mushroom.nombre}")
+                        Text(text = "Descripcion: ${mushroom.descripcion}")
+                        // Text(text = "Latitude: ${mushroom.latitud}")
+                        // Text(text = "Longitude: ${mushroom.longitud}")
+                        Text(text = "Fecha: ${mushroom.dateTime}") // Muestra la fecha
                     }
                 }
             }

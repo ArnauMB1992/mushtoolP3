@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,8 +13,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import java.util.Calendar
+import java.util.Date
 
 class CameraActivity : AppCompatActivity() {
     private var cameraPreview: CameraPreview? = null
@@ -30,6 +34,7 @@ class CameraActivity : AppCompatActivity() {
         override fun onProviderDisabled(provider: String) {}
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
@@ -59,16 +64,20 @@ class CameraActivity : AppCompatActivity() {
             val name = nameEditText.text.toString()
             val description = descriptionEditText.text.toString()
 
+            // Get current date and time
+            val calendar = Calendar.getInstance()
+            val dateTime = calendar.time
+
             // Check if location is available
             if (location != null) {
-                saveData(name, description, location!!.latitude, location!!.longitude)
+                saveData(name, description, location!!.latitude, location!!.longitude, dateTime)
             } else {
                 // If location is not available, wait for it
                 val handler = Handler(Looper.getMainLooper())
                 val runnable = object : Runnable {
                     override fun run() {
                         if (location != null) {
-                            saveData(name, description, location!!.latitude, location!!.longitude)
+                            saveData(name, description, location!!.latitude, location!!.longitude, dateTime)
                         } else {
                             // If location is still not available, wait another second
                             handler.postDelayed(this, 1000)
@@ -81,8 +90,8 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveData(name: String, description: String, latitude: Double, longitude: Double) {
-        val seta = SetaManager.Seta(name, description, latitude, longitude)
+    private fun saveData(name: String, description: String, latitude: Double, longitude: Double, dateTime: Date?) {
+        val seta = Seta(name, description, latitude, longitude, dateTime, R.drawable.agaricuscampestris)
         SetaManager.addSeta(seta, this)
         Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
     }

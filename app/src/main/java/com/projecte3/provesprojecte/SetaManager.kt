@@ -6,13 +6,6 @@ import com.google.gson.reflect.TypeToken
 
 object SetaManager {
 
-    data class Seta(
-        var nombre: String,
-        var descripcion: String,
-        val latitud: Double,
-        val longitud: Double,
-    )
-
     var setas = mutableListOf<Seta>()
 
     fun addSeta(seta: Seta, context: Context) {

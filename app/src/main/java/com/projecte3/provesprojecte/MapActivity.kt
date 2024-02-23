@@ -71,7 +71,7 @@ class MapActivity : ComponentActivity(), MapListener {
         // Crear un MapEventsReceiver
         val receiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                var closestSeta: SetaManager.Seta? = null
+                var closestSeta: Seta? = null
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {
@@ -86,7 +86,6 @@ class MapActivity : ComponentActivity(), MapListener {
                     // Muestra un mensaje con el nombre de la seta más cercana
                     Toast.makeText(this@MapActivity, "La seta más cercana es ${closestSeta.nombre}, es ${closestSeta.descripcion}", Toast.LENGTH_SHORT).show()
                 }
-
                 return true
             }
 
@@ -105,28 +104,31 @@ class MapActivity : ComponentActivity(), MapListener {
                             .setPositiveButton("Aceptar") { _, _ ->
                                 val newName = editText.text.toString()
                                 closestSeta = closestSeta!!.copy(nombre = newName)
+
                                 // Actualiza el título del marcador en el mapa
                                 val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta!!.latitud && it.position.longitude == closestSeta!!.longitud } as? Marker
                                 if (marker != null) {
                                     marker.title = newName
                                     map.invalidate() // Refresca el mapa para mostrar el nuevo nombre en el marcador
                                 }
+
                                 // Actualiza el nombre de la seta en la lista de setas
                                 val setaIndex = SetaManager.setas.indexOfFirst { it.latitud == closestSeta!!.latitud && it.longitud == closestSeta!!.longitud }
                                 if (setaIndex != -1) {
                                     SetaManager.setas[setaIndex] = closestSeta!!
+                                    SetaManager.saveSetas(this@MapActivity) // Guarda los cambios en las preferencias
                                 }
                             }
                             .setNegativeButton("Cancelar", null)
                             .show()
                     }
                 }
-
                 return true
             }
 
-            fun findClosestSeta(p: GeoPoint): SetaManager.Seta? {
-                var closestSeta: SetaManager.Seta? = null
+            fun findClosestSeta(p: GeoPoint): Seta? {
+
+                var closestSeta: Seta? = null
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {
@@ -136,7 +138,6 @@ class MapActivity : ComponentActivity(), MapListener {
                         closestSeta = seta
                     }
                 }
-
                 return closestSeta
             }
         }
