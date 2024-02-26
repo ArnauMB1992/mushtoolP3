@@ -1,28 +1,32 @@
 package com.projecte3.provesprojecte
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.provider.MediaStore
+import android.util.Base64
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import java.io.ByteArrayOutputStream
 import java.util.Calendar
 import java.util.Date
 
 class CameraActivity : AppCompatActivity() {
-    private var cameraPreview: CameraPreview? = null
     private var locationManager: LocationManager? = null
     private var location: Location? = null
+    private var imageBitmap: Bitmap? = null
+
+    private val REQUEST_IMAGE_CAPTURE = 1
 
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
@@ -39,13 +43,10 @@ class CameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
-        val previewFrame = findViewById<FrameLayout>(R.id.cameraPreview)
-        cameraPreview = CameraPreview(this)
-        previewFrame.addView(cameraPreview)
-
         val nameEditText = findViewById<EditText>(R.id.nameEditText)
         val descriptionEditText = findViewById<EditText>(R.id.descriptionEditText)
         val saveButton = findViewById<Button>(R.id.saveButton)
+        val captureButton = findViewById<Button>(R.id.captureButton)
 
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
@@ -60,6 +61,13 @@ class CameraActivity : AppCompatActivity() {
             locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
         }
 
+        captureButton.setOnClickListener {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            if (takePictureIntent.resolveActivity(packageManager) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
+        }
+
         saveButton.setOnClickListener {
             val name = nameEditText.text.toString()
             val description = descriptionEditText.text.toString()
@@ -69,40 +77,29 @@ class CameraActivity : AppCompatActivity() {
             val dateTime = calendar.time
 
             // Check if location is available
-            if (location != null) {
-                saveData(name, description, location!!.latitude, location!!.longitude, dateTime)
+            if (location != null && imageBitmap != null) {
+                saveData(name, description, location!!.latitude, location!!.longitude, dateTime, imageBitmap!!)
             } else {
-                // If location is not available, wait for it
-                val handler = Handler(Looper.getMainLooper())
-                val runnable = object : Runnable {
-                    override fun run() {
-                        if (location != null) {
-                            saveData(name, description, location!!.latitude, location!!.longitude, dateTime)
-                        } else {
-                            // If location is still not available, wait another second
-                            handler.postDelayed(this, 1000)
-                        }
-                    }
-                }
-                // Start waiting
-                handler.postDelayed(runnable, 1000)
+                Toast.makeText(this, "Please capture an image and ensure location is available", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun saveData(name: String, description: String, latitude: Double, longitude: Double, dateTime: Date?) {
-        val seta = Seta(name, description, latitude, longitude, dateTime, R.drawable.agaricuscampestris)
+    private fun saveData(name: String, description: String, latitude: Double, longitude: Double, dateTime: Date?, image: Bitmap) {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
+
+        val seta = Seta(name, description, latitude, longitude, dateTime, encodedImage)
         SetaManager.addSeta(seta, this)
         Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onPause() {
-        super.onPause()
-        cameraPreview?.surfaceDestroyed(cameraPreview!!.holder)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        cameraPreview?.surfaceCreated(cameraPreview!!.holder)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            imageBitmap = data?.extras?.get("data") as Bitmap
+        }
     }
 }

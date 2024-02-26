@@ -17,56 +17,48 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.firestore.FirebaseFirestore
 import com.projecte3.provesprojecte.com.projecte3.provesprojecte.SetaDetailActivity
-import java.text.SimpleDateFormat
+
+private const val TAG = "WikiSetasActivity"
 
 class WikiSetasActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mma")
-
         setContent {
-            val setas = listOf(
-                Seta(
-                    "Agaricus xanthodermus",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.agaricusxanthodermus
-                ),
-                Seta(
-                    "Agaricus campestris",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.agaricuscampestris
-                ),
-                Seta(
-                    "Amanita Muscaria",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.amanitamuscaria
-                ),
-                Seta(
-                    "Amanita Phalloides",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.amanitaphalloides
-                ),
-                Seta(
-                    "Calocybe gambosa",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.calocybegambosa
-                ),
-                Seta(
-                    "Craterellus cornucopioides",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.craterelluscornucopioides
-                ),
-                Seta(
-                    "Infundibulicybe geotropa",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.infundibulicybegeotropa
-                ),
-                Seta(
-                    "Leccinellumg riseum",
-                    null.toString(), 0.0, 0.0, sdf.parse("1/1/1990 1:00PM"), R.drawable.leccinellumgriseum
-                ),
-            )
+            val db = FirebaseFirestore.getInstance()
+            val listaSetas = remember { mutableStateOf(listOf<Setas>()) }
+
+            db.collection("setas")
+                .get()
+                .addOnSuccessListener { result ->
+                    listaSetas.value = result.map { document ->
+                        Setas(
+                            document.getString("nombre_comun") ?: "",
+                            document.getString("nombre_cientifico") ?: "",
+                            document.getString("familia") ?: "",
+                            document.getString("comestible") ?: "",
+                            document.getString("sombrero") ?: "",
+                            document.getString("pie") ?: "",
+                            document.getString("carne") ?: "",
+                            document.getString("habitat") ?: "",
+                            document.getString("observaciones") ?: "",
+                            document.getString("foto") ?: "",
+                            document.getString("comun") ?: "",
+                        )
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents.", exception)
+                }
 
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -74,26 +66,26 @@ class WikiSetasActivity : ComponentActivity() {
             ) {
                 Column {
                     LazyColumn {
-                        items(setas) { seta ->
+                        items(listaSetas.value) { setas ->
                             Row(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .clickable {
                                         val intent = Intent(this@WikiSetasActivity, SetaDetailActivity::class.java).apply {
-                                            putExtra("name", seta.nombre)
-                                            putExtra("imageRes", seta.imageRes)
+                                            putExtra("name", setas.nombre_comun)
+                                            putExtra("imageRes", setas.foto)
                                         }
                                         startActivity(intent)
                                     },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Image(
-                                    painter = painterResource(id = seta.imageRes),
+                                    painter = painterResource(id = setas.foto.toInt()),
                                     contentDescription = null,
                                     modifier = Modifier.size(84.dp)
                                 )
                                 Text(
-                                    text = seta.nombre,
+                                    text = setas.nombre_comun,
                                     color = Color.Black,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
@@ -103,9 +95,8 @@ class WikiSetasActivity : ComponentActivity() {
                 }
                 Button(
                     onClick = { finish() },
-
-                    ) {
-                    Text(text = "Volver", fontSize = 20.sp) // Aumenta el tamaño del texto a 30sp
+                ) {
+                    Text(text = "Volver", fontSize = 20.sp)
                 }
             }
         }

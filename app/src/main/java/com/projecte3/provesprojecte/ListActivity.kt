@@ -1,9 +1,13 @@
 package com.projecte3.provesprojecte
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -37,6 +43,11 @@ class ListActivity : ComponentActivity() {
             MushroomListScreen(mushrooms, this)
         }
     }
+}
+
+fun decodeBase64ToBitmap(base64String: String): Bitmap {
+    val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 }
 
 @Composable
@@ -69,6 +80,14 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                         // Text(text = "Latitude: ${mushroom.latitud}")
                         // Text(text = "Longitude: ${mushroom.longitud}")
                         Text(text = "Fecha: ${mushroom.dateTime}") // Muestra la fecha
+
+                        val imageBitmap = decodeBase64ToBitmap(mushroom.image)
+                        Image(
+                            bitmap = imageBitmap.asImageBitmap(),
+                            contentDescription = null, // alt text
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
                     }
                 }
             }

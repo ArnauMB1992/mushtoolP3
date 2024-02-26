@@ -46,7 +46,7 @@ class LearningActivity  : ComponentActivity() {
                         ) {
                             Row {
                                 Button(onClick = {
-                                    val intent = Intent(this@LearningActivity, WikiSetasActivity::class.java)
+                                    // val intent = Intent(this@LearningActivity, WikiSetasActivity::class.java)
                                     startActivity(intent)
                                 }) {
                                     Text(text = "WIKISETA", fontSize = 24.sp)

@@ -1,6 +1,5 @@
 package com.projecte3.provesprojecte
 
-import androidx.annotation.DrawableRes
 import java.util.Date
 
 data class Seta(
@@ -9,5 +8,5 @@ data class Seta(
     val latitud: Double,
     val longitud: Double,
     val dateTime: Date?,
-    @DrawableRes val imageRes: Int,
+    val image: String,
 )
