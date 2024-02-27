@@ -20,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import com.google.firebase.database.FirebaseDatabase
 import java.io.ByteArrayOutputStream
 import java.util.Calendar
-import java.util.Date
 
 class CameraActivity : AppCompatActivity() {
     private var locationManager: LocationManager? = null
@@ -94,26 +93,19 @@ class CameraActivity : AppCompatActivity() {
 
             // Check if location and image are available
             if (location != null && imageBitmap != null) {
-                saveData(name, description, location!!.latitude, location!!.longitude, dateTime, imageBitmap!!)
+                val seta = Seta(null, name, description, location!!.latitude, location!!.longitude, dateTime, encodeImageToBase64(imageBitmap!!))
+                SetaManager.addSeta(seta, this)
             } else {
                 Toast.makeText(this, "Please capture an image and ensure location is available", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun saveData(name: String, description: String, latitude: Double, longitude: Double, dateTime: Date?, image: Bitmap) {
+    private fun encodeImageToBase64(bitmap: Bitmap): String {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
-        val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
-
-        val setaId = myRef.push().key
-        if (setaId != null) {
-            val seta = Seta(setaId, name, description, latitude, longitude, dateTime, encodedImage)
-            myRef.child(setaId).setValue(seta).addOnCompleteListener {
-                Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
-            }
-        }
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,8 +1,9 @@
 package com.projecte3.provesprojecte
 
+import java.io.Serializable
 import java.util.Date
 
-class Seta() {
+class Seta() : Serializable {
     var id: String? = null
     var nombre: String? = null
     var descripcion: String? = null
