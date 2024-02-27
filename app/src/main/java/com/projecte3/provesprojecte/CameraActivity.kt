@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -31,16 +30,6 @@ class CameraActivity : AppCompatActivity() {
     val database = FirebaseDatabase.getInstance()
     val myRef = database.getReference("setas")
 
-    private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            this@CameraActivity.location = location
-        }
-
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {}
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,17 +42,6 @@ class CameraActivity : AppCompatActivity() {
 
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
-        }
-
         captureButton.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(packageManager) != null) {
@@ -75,10 +53,7 @@ class CameraActivity : AppCompatActivity() {
                         this,
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    // Request location updates
-                    locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
-                }
+                )
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
         }
@@ -95,8 +70,9 @@ class CameraActivity : AppCompatActivity() {
             if (location != null && imageBitmap != null) {
                 val seta = Seta(null, name, description, location!!.latitude, location!!.longitude, dateTime, encodeImageToBase64(imageBitmap!!))
                 SetaManager.addSeta(seta, this)
+                Toast.makeText(this, "Guardado con éxito", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Please capture an image and ensure location is available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Porfavor captura una imagen y asegurate de que tengas activado el gps", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -112,8 +88,20 @@ class CameraActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
-            // Stop location updates
-            locationManager?.removeUpdates(locationListener)
+            Toast.makeText(this, "Captura realizada", Toast.LENGTH_SHORT).show()
+
+            // Obtener la ubicación actual después de capturar la foto
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                Toast.makeText(this, "Ubicación guardada", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
