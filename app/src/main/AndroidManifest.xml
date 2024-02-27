@@ -52,8 +52,29 @@
             />
 
         <activity
-            android:name=".WikiSetasActivity"
-            android:theme="@style/Theme.ProvesProjecte3"
+            android:name=".EmpAdapter"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".EmployeeDetailsActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".EmployeeModel"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".FetchingActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".InsertionActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+
+        <activity
+            android:name=".WikiSetas"
+            android:theme="@style/Theme.AppCompat"
             />
 
         <activity
