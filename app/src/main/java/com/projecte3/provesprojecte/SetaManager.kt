@@ -1,37 +1,58 @@
 package com.projecte3.provesprojecte
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
+import com.google.firebase.database.ktx.getValue
 
 object SetaManager {
 
+    private val database: FirebaseDatabase = Firebase.database
+    private val myRef = database.getReference("post")
+
     var setas = mutableListOf<Seta>()
 
-    fun addSeta(seta: Seta, context: Context) {
-        setas.add(seta)
-        saveSetas(context)
+    fun addSeta(seta: Seta) {
+        val setaId = myRef.push().key
+        if (setaId != null) {
+            myRef.child(setaId).setValue(seta).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    seta.id = setaId
+                    setas.add(seta)
+                }
+            }
+        }
     }
 
-    fun removeSeta(seta: Seta, context: Context) {
-        setas.remove(seta)
-        saveSetas(context)
+    fun removeSeta(seta: Seta) {
+        if (seta.id != null) {
+            myRef.child(seta.id!!).removeValue().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    setas.remove(seta)
+                }
+            }
+        }
     }
 
-    fun saveSetas(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("SetaManager", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(setas)
-        editor.putString("setas", json)
-        editor.apply()
-    }
+    fun loadSetas() {
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                setas.clear()
+                for (setaSnapshot in dataSnapshot.children) {
+                    val seta = setaSnapshot.getValue<Seta>()
+                    if (seta != null) {
+                        seta.id = setaSnapshot.key
+                        setas.add(seta)
+                    }
+                }
+            }
 
-    fun loadSetas(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("SetaManager", Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString("setas", null)
-        val type = object : TypeToken<List<Seta>>() {}.type
-        setas = gson.fromJson(json, type) ?: mutableListOf()
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle possible errors.
+            }
+        })
     }
 }

@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.FirebaseFirestore
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -27,6 +28,7 @@ class MapActivity : ComponentActivity(), MapListener {
     lateinit var map: MapView
     lateinit var controller: IMapController
     lateinit var mMyLocationOverlay: MyLocationNewOverlay
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,12 +38,15 @@ class MapActivity : ComponentActivity(), MapListener {
 
         map = findViewById(R.id.map)
 
-        for (seta in SetaManager.setas) {
-            val marker = Marker(map)
-            marker.position = GeoPoint(seta.latitud, seta.longitud)
-            marker.icon = ContextCompat.getDrawable(this, R.drawable.seta)
-            marker.title = seta.nombre
-            map.overlays.add(marker)
+        db.collection("setas").get().addOnSuccessListener { result ->
+            for (document in result) {
+                val seta = document.toObject(Seta::class.java)
+                val marker = Marker(map)
+                marker.position = GeoPoint(seta.latitud!!, seta.longitud!!)
+                marker.icon = ContextCompat.getDrawable(this, R.drawable.seta)
+                marker.title = seta.nombre
+                map.overlays.add(marker)
+            }
         }
 
         Configuration.getInstance().load(
@@ -75,7 +80,7 @@ class MapActivity : ComponentActivity(), MapListener {
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {
-                    val distance = haversine(p.latitude, p.longitude, seta.latitud, seta.longitud)
+                    val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
                     if (distance < minDistance) {
                         minDistance = distance
                         closestSeta = seta
@@ -104,7 +109,6 @@ class MapActivity : ComponentActivity(), MapListener {
                             .setPositiveButton("Aceptar") { _, _ ->
                                 val newName = editText.text.toString()
                                 closestSeta = closestSeta!!.copy(nombre = newName)
-
                                 // Actualiza el título del marcador en el mapa
                                 val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta!!.latitud && it.position.longitude == closestSeta!!.longitud } as? Marker
                                 if (marker != null) {
@@ -116,7 +120,7 @@ class MapActivity : ComponentActivity(), MapListener {
                                 val setaIndex = SetaManager.setas.indexOfFirst { it.latitud == closestSeta!!.latitud && it.longitud == closestSeta!!.longitud }
                                 if (setaIndex != -1) {
                                     SetaManager.setas[setaIndex] = closestSeta!!
-                                    SetaManager.saveSetas(this@MapActivity) // Guarda los cambios en las preferencias
+                                    // Changes to Seta objects are directly made in Firebase
                                 }
                             }
                             .setNegativeButton("Cancelar", null)
@@ -132,7 +136,7 @@ class MapActivity : ComponentActivity(), MapListener {
                 var minDistance = Double.MAX_VALUE
 
                 for (seta in SetaManager.setas) {
-                    val distance = haversine(p.latitude, p.longitude, seta.latitud, seta.longitud)
+                    val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
                     if (distance < minDistance) {
                         minDistance = distance
                         closestSeta = seta

@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 class ListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SetaManager.loadSetas(this)
+        SetaManager.loadSetas()
         val mushrooms = SetaManager.setas
         setContent {
             MushroomListScreen(mushrooms, this)
@@ -81,7 +81,7 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                         // Text(text = "Longitude: ${mushroom.longitud}")
                         Text(text = "Fecha: ${mushroom.dateTime}") // Muestra la fecha
 
-                        val imageBitmap = decodeBase64ToBitmap(mushroom.image)
+                        val imageBitmap = decodeBase64ToBitmap(mushroom.encodedImage!!)
                         Image(
                             bitmap = imageBitmap.asImageBitmap(),
                             contentDescription = null, // alt text
@@ -130,7 +130,7 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                     TextButton(
                         onClick = {
                             showDialog = false
-                            selectedMushroom?.let { SetaManager.removeSeta(it, context) }
+                            selectedMushroom?.let { SetaManager.removeSeta(it) }
                         }
                     ) {
                         Text("Sí")
@@ -194,7 +194,6 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                                 )
                                 SetaManager.setas = SetaManager.setas.map { if (it == mushroom) updatedMushroom else it }
                                     .toMutableList()
-                                SetaManager.saveSetas(context)
                             }
                         }
                     ) {

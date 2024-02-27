@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.firebase.database.FirebaseDatabase
 import java.io.ByteArrayOutputStream
 import java.util.Calendar
 import java.util.Date
@@ -27,6 +28,9 @@ class CameraActivity : AppCompatActivity() {
     private var imageBitmap: Bitmap? = null
 
     private val REQUEST_IMAGE_CAPTURE = 1
+
+    val database = FirebaseDatabase.getInstance()
+    val myRef = database.getReference("setas")
 
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
@@ -64,6 +68,18 @@ class CameraActivity : AppCompatActivity() {
         captureButton.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(packageManager) != null) {
+                // Check for location permissions
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    // Request location updates
+                    locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
+                }
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
         }
@@ -76,7 +92,7 @@ class CameraActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             val dateTime = calendar.time
 
-            // Check if location is available
+            // Check if location and image are available
             if (location != null && imageBitmap != null) {
                 saveData(name, description, location!!.latitude, location!!.longitude, dateTime, imageBitmap!!)
             } else {
@@ -91,15 +107,21 @@ class CameraActivity : AppCompatActivity() {
         val byteArray = byteArrayOutputStream.toByteArray()
         val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
 
-        val seta = Seta(name, description, latitude, longitude, dateTime, encodedImage)
-        SetaManager.addSeta(seta, this)
-        Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
+        val setaId = myRef.push().key
+        if (setaId != null) {
+            val seta = Seta(setaId, name, description, latitude, longitude, dateTime, encodedImage)
+            myRef.child(setaId).setValue(seta).addOnCompleteListener {
+                Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
+            // Stop location updates
+            locationManager?.removeUpdates(locationListener)
         }
     }
 }
