@@ -1,9 +1,11 @@
 package com.projecte3.provesprojecte
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +22,8 @@ class FetchingActivity : AppCompatActivity() {
     private lateinit var tvLoadingData: TextView
     private lateinit var empList: ArrayList<EmployeeModel>
     private lateinit var dbRef: DatabaseReference
+    private lateinit var spinnerFilter: Spinner
+    private lateinit var mAdapter: EmpAdapter // Declare mAdapter as a lateinit property
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +34,54 @@ class FetchingActivity : AppCompatActivity() {
         empRecyclerView.setHasFixedSize(true)
         tvLoadingData = findViewById(R.id.tvLoadingData)
 
+        spinnerFilter = findViewById(R.id.spinnerFilter)
+        val options = arrayOf("Todo", "Muy común", "Común", "Poco común") // Cambia las opciones
+        spinnerFilter.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options)
+        spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                filterByEmpComun(position.toString()) // Usa la posición como valor
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // No hacer nada
+            }
+        }
+
         empList = arrayListOf<EmployeeModel>()
+        mAdapter = EmpAdapter(empList) // Initialize mAdapter here
 
         getEmployeesData()
 
+    }
+
+    private fun filterByEmpComun(value: String) {
+        val filteredList = if (value == "0") { // Si el valor seleccionado es "0", muestra todos los elementos
+            ArrayList(empList)
+        } else {
+            ArrayList(empList.filter { it.empComun == value })
+        }
+        mAdapter = EmpAdapter(filteredList) // Actualiza mAdapter con la lista filtrada
+        mAdapter.setOnItemClickListener(object : EmpAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+
+                val intent = Intent(this@FetchingActivity, EmployeeDetailsActivity::class.java)
+
+                //put extras
+                intent.putExtra("empId", filteredList[position].empId)
+                intent.putExtra("empNombre_comun", filteredList[position].empNombre_comun)
+                intent.putExtra("empNombre_cientifico", filteredList[position].empNombre_cientifico)
+                intent.putExtra("empComestible", filteredList[position].empComestible)
+                intent.putExtra("empSombrero", filteredList[position].empSombrero)
+                intent.putExtra("empPie", filteredList[position].empPie)
+                intent.putExtra("empFoto", filteredList[position].empFoto)
+                intent.putExtra("empHabitat", filteredList[position].empHabitat)
+                intent.putExtra("empObservaciones", filteredList[position].empObservaciones)
+                intent.putExtra("empComun", filteredList[position].empComun)
+                startActivity(intent)
+            }
+
+        })
+        empRecyclerView.adapter = mAdapter
     }
 
     private fun getEmployeesData() {
@@ -51,7 +99,7 @@ class FetchingActivity : AppCompatActivity() {
                         val empData = empSnap.getValue(EmployeeModel::class.java)
                         empList.add(empData!!)
                     }
-                    val mAdapter = EmpAdapter(empList)
+                    mAdapter = EmpAdapter(empList) // Update mAdapter with the new list
                     empRecyclerView.adapter = mAdapter
 
                     mAdapter.setOnItemClickListener(object : EmpAdapter.onItemClickListener{

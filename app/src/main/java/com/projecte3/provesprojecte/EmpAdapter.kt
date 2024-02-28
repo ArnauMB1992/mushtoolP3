@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
     RecyclerView.Adapter<EmpAdapter.ViewHolder>() {
 
-    private lateinit var mListener: onItemClickListener
+    private var mListener: onItemClickListener? = null
 
     interface onItemClickListener{
         fun onItemClick(position: Int)
@@ -33,13 +33,13 @@ class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
         return empList.size
     }
 
-    class ViewHolder(itemView: View, clickListener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val clickListener: onItemClickListener?) : RecyclerView.ViewHolder(itemView) {
 
         val tvEmpNombre_comun : TextView = itemView.findViewById(R.id.tvEmpNombre_comun)
 
         init {
             itemView.setOnClickListener {
-                clickListener.onItemClick(adapterPosition)
+                clickListener?.onItemClick(adapterPosition)
             }
         }
 
