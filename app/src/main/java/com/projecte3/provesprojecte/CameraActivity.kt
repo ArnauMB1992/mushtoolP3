@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -28,7 +29,7 @@ class CameraActivity : AppCompatActivity() {
     private val REQUEST_IMAGE_CAPTURE = 1
 
     val database = FirebaseDatabase.getInstance()
-    val myRef = database.getReference("setas")
+    val myRef = database.getReference("post")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +54,11 @@ class CameraActivity : AppCompatActivity() {
                         this,
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
-                )
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                ) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                } else {
+                    Toast.makeText(this, "Porfavor activa los permisos de ubicación", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -68,9 +72,14 @@ class CameraActivity : AppCompatActivity() {
 
             // Check if location and image are available
             if (location != null && imageBitmap != null) {
-                val seta = Seta(null, name, description, location!!.latitude, location!!.longitude, dateTime, encodeImageToBase64(imageBitmap!!))
-                SetaManager.addSeta(seta, this)
+                val newSetaId = myRef.push().key
+                val seta = Seta(newSetaId, name, description, location!!.latitude, location!!.longitude, dateTime, encodeImageToBase64(imageBitmap!!))
+                myRef.child(newSetaId!!).setValue(seta)
                 Toast.makeText(this, "Guardado con éxito", Toast.LENGTH_SHORT).show()
+
+                // Reproduce el sonido de guardado
+                val mediaPlayer = MediaPlayer.create(this, R.raw.save)
+                mediaPlayer.start()
             } else {
                 Toast.makeText(this, "Porfavor captura una imagen y asegurate de que tengas activado el gps", Toast.LENGTH_SHORT).show()
             }

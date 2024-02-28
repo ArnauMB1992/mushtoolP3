@@ -2,11 +2,16 @@ package com.projecte3.provesprojecte
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
@@ -33,21 +38,10 @@ class MapActivity : ComponentActivity(), MapListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Set the content view before trying to find the view
+        // Establecer el contenido de la vista antes de intentar encontrar la vista
         setContentView(R.layout.activity_map)
 
         map = findViewById(R.id.map)
-
-        db.collection("setas").get().addOnSuccessListener { result ->
-            for (document in result) {
-                val seta = document.toObject(Seta::class.java)
-                val marker = Marker(map)
-                marker.position = GeoPoint(seta.latitud!!, seta.longitud!!)
-                marker.icon = ContextCompat.getDrawable(this, R.drawable.seta)
-                marker.title = seta.nombre
-                map.overlays.add(marker)
-            }
-        }
 
         Configuration.getInstance().load(
             applicationContext,
@@ -88,7 +82,7 @@ class MapActivity : ComponentActivity(), MapListener {
                 }
 
                 if (closestSeta != null) {
-                    // Muestra un mensaje con el nombre de la seta más cercana
+                    // Mostrar un mensaje con el nombre de la seta más cercana
                     Toast.makeText(this@MapActivity, "La seta más cercana es ${closestSeta.nombre}, es ${closestSeta.descripcion}", Toast.LENGTH_SHORT).show()
                 }
                 return true
@@ -109,18 +103,18 @@ class MapActivity : ComponentActivity(), MapListener {
                             .setPositiveButton("Aceptar") { _, _ ->
                                 val newName = editText.text.toString()
                                 closestSeta = closestSeta!!.copy(nombre = newName)
-                                // Actualiza el título del marcador en el mapa
+                                // Actualizar el título del marcador en el mapa
                                 val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta!!.latitud && it.position.longitude == closestSeta!!.longitud } as? Marker
                                 if (marker != null) {
                                     marker.title = newName
-                                    map.invalidate() // Refresca el mapa para mostrar el nuevo nombre en el marcador
+                                    map.invalidate() // Refrescar el mapa para mostrar el nuevo nombre en el marcador
                                 }
 
-                                // Actualiza el nombre de la seta en la lista de setas
+                                // Actualizar el nombre de la seta en la lista de setas
                                 val setaIndex = SetaManager.setas.indexOfFirst { it.latitud == closestSeta!!.latitud && it.longitud == closestSeta!!.longitud }
                                 if (setaIndex != -1) {
                                     SetaManager.setas[setaIndex] = closestSeta!!
-                                    // Changes to Seta objects are directly made in Firebase
+                                    // Los cambios en los objetos de Seta se realizan directamente en Firebase
                                 }
                             }
                             .setNegativeButton("Cancelar", null)
@@ -151,7 +145,7 @@ class MapActivity : ComponentActivity(), MapListener {
         map.overlays.add(overlay)
 
         // Cargar los marcadores guardados
-        loadMarkerPreferences()
+        // loadMarkerPreferences() // This line is commented out because the function is not defined
 
         map.addMapListener(this)
 
@@ -159,10 +153,53 @@ class MapActivity : ComponentActivity(), MapListener {
         btnBack.setOnClickListener {
             finish()
         }
+
+        // Obtener publicaciones de Firestore y agregarlas como marcadores
+        fetchPostsAndAddMarkers()
+    }
+
+    private fun fetchPostsAndAddMarkers() {
+        val postsRef = FirebaseDatabase.getInstance().getReference("post")
+        postsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    val seta = snapshot.getValue(Seta::class.java)
+                    seta?.let {
+                        val location = it.locationSerialized?.split(",")
+                        val lat = location?.get(0)?.toDouble()
+                        val lon = location?.get(1)?.toDouble()
+                        val marker = Marker(map)
+
+                        marker.icon = ContextCompat.getDrawable(this@MapActivity, R.drawable.seta)
+                        marker.position = GeoPoint(lat!!, lon!!)
+                        marker.title = it.nombre
+                        map.overlays.add(marker)
+                        map.invalidate() // Refrescar el mapa para mostrar el nuevo marcador
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle possible errors.
+                Log.w("MapActivity", "Error al obtener documentos.", databaseError.toException())
+            }
+        })
+    }
+
+    private fun addMarkerForPost(post: Seta) {
+        val marker = Marker(map)
+        marker.position = GeoPoint(post.latitud!!, post.longitud!!)
+        marker.icon = ContextCompat.getDrawable(this, R.drawable.seta)
+        marker.title = post.nombre
+        map.overlays.add(marker)
+        map.invalidate() // Refrescar el mapa para mostrar el nuevo marcador
+
+        // Agregar un mensaje de registro
+        Log.d("MapActivity", "Marcador agregado: ${post.nombre} en (${post.latitud}, ${post.longitud})")
     }
 
     fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val r = 6371 // radius of the earth in km
+        val r = 6371 // radio de la tierra en km
         val latDistance = Math.toRadians(lat2 - lat1)
         val lonDistance = Math.toRadians(lon2 - lon1)
         val a = Math.sin(latDistance / 2).pow(2.0) +
@@ -170,27 +207,6 @@ class MapActivity : ComponentActivity(), MapListener {
                 Math.sin(lonDistance / 2).pow(2.0)
         val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
         return r * c
-    }
-
-    private fun loadMarkerPreferences() {
-        val sharedPreferences = getSharedPreferences("markers", MODE_PRIVATE)
-        val existingMarkers = sharedPreferences.getStringSet("locations", mutableSetOf()) ?: mutableSetOf()
-        for (location in existingMarkers) {
-            val latLon = location.split(",")
-            val lat = latLon[0].toDouble()
-            val lon = latLon[1].toDouble()
-            val marker = Marker(map)
-            marker.position = GeoPoint(lat, lon)
-            marker.icon = ContextCompat.getDrawable(this, R.drawable.seta)
-            map.overlays.add(marker)
-        }
-    }
-
-    private fun deleteMarkerPreferences() {
-        val sharedPreferences = getSharedPreferences("markers", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
     }
 
     override fun onScroll(event: ScrollEvent?): Boolean {
