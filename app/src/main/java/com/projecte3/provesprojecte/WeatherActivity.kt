@@ -1,13 +1,6 @@
 package com.projecte3.provesprojecte
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -25,9 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,7 +40,6 @@ class WeatherActivity : AppCompatActivity() {
 
     @Composable
     fun WeatherScreen() {
-        val context = LocalContext.current
         val weatherDescription = remember { mutableStateOf("") }
         val temperature = remember { mutableStateOf("") }
         val location = remember { mutableStateOf("") }
@@ -72,27 +62,6 @@ class WeatherActivity : AppCompatActivity() {
                 }
             }) {
                 Text("Consultar")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, object : LocationListener {
-                        override fun onLocationChanged(location: Location) {
-                            scope.launch {
-                                fetchWeatherData(weatherDescription, temperature, "${location.latitude},${location.longitude}")
-                            }
-                        }
-
-                        override fun onProviderDisabled(provider: String) {
-                            // This method is called when the provider is disabled by the user.
-                            // You can leave it empty if you don't need to do anything in this case.
-                        }
-                    }, Looper.getMainLooper())
-                }
-            }) {
-                Text("Tiempo en mi zona")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Descripción del clima: ${weatherDescription.value}")
