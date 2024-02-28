@@ -48,9 +48,18 @@
             android:theme="@style/Theme.ProvesProjecte3" />
 
         <activity
+            android:name=".GameActivity"
+            android:theme="@style/Theme.ProvesProjecte3" />
+
+
+        <activity
             android:name=".QuizActivity"
             android:theme="@style/Theme.ProvesProjecte3"
             />
+
+        <activity
+            android:name=".Puntuaciones"
+            android:theme="@style/Theme.ProvesProjecte3" />
 
         <activity
             android:name=".EmpAdapter"

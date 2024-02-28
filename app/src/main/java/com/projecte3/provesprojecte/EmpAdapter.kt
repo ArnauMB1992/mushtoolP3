@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
     RecyclerView.Adapter<EmpAdapter.ViewHolder>() {
 
-    private lateinit var mListener: onItemClickListener
+    private var mListener: onItemClickListener? = null
 
     interface onItemClickListener{
         fun onItemClick(position: Int)
@@ -26,20 +26,20 @@ class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentEmp = empList[position]
-        holder.tvEmpName.text = currentEmp.empName
+        holder.tvEmpNombre_comun.text = currentEmp.empNombre_comun
     }
 
     override fun getItemCount(): Int {
         return empList.size
     }
 
-    class ViewHolder(itemView: View, clickListener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val clickListener: onItemClickListener?) : RecyclerView.ViewHolder(itemView) {
 
-        val tvEmpName : TextView = itemView.findViewById(R.id.tvEmpName)
+        val tvEmpNombre_comun : TextView = itemView.findViewById(R.id.tvEmpNombre_comun)
 
         init {
             itemView.setOnClickListener {
-                clickListener.onItemClick(adapterPosition)
+                clickListener?.onItemClick(adapterPosition)
             }
         }
 

@@ -25,9 +25,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.database.FirebaseDatabase
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class QuizActivity : ComponentActivity() {
+    // Crear una instancia de FirebaseDatabase
+    private val database = FirebaseDatabase.getInstance()
+    // Crear una referencia a la base de datos
+    private val myRef = database.getReference("scores")
+
     // Lista de preguntas
     private val questions = listOf(
         Question(R.drawable.agaricusxanthodermus,"¿Cuál es el nombre de esta seta?", listOf("Agaricus_Xanthodermus", "Agaricus_campestris", "Amanita_phalloides"), "Agaricus_Xanthodermus"),
@@ -46,6 +54,7 @@ class QuizActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ProvesProjecte3Theme {
+
                 val currentQuestionIndex = remember { mutableStateOf(0) }
 
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -80,8 +89,8 @@ class QuizActivity : ComponentActivity() {
                             currentQuestion.options.forEach { option ->
                                 Button(
                                     onClick = {
-                                        if (option == currentQuestion.correctOption) {
-                                            // Si la respuesta es correcta, pasa a la siguiente pregunta
+                                        if (option == currentQuestion.correctOption){
+                                        // Si la respuesta es correcta, pasa a la siguiente pregunta
                                             score += 10
                                             currentQuestionIndex.value++
                                             if (currentQuestionIndex.value == questions.size) {
@@ -89,14 +98,19 @@ class QuizActivity : ComponentActivity() {
                                                 Toast.makeText(this@QuizActivity, "Puntuación: $score", Toast.LENGTH_LONG).show() // Display the score
                                                 currentQuestionIndex.value = 0
                                                 score = 0
+
                                             }
+                                            // Guardar la puntuación en Firebase
+                                            saveScoreToFirebase(score)
                                         } else {
                                             // Si la respuesta es incorrecta, vuelve a la primera pregunta
                                             Toast.makeText(this@QuizActivity, "Puntuación: $score", Toast.LENGTH_LONG).show() // Display the score
                                             currentQuestionIndex.value = 0
                                             score = 0
+
                                         }
                                     }
+
                                 ) {
                                     Text(text = option, fontSize = 24.sp)
                                 }
@@ -116,6 +130,12 @@ class QuizActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    private fun saveScoreToFirebase(score: Int) {
+        val sdf = SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z")
+        val currentDateAndTime: String = sdf.format(Date())
+        val scoreData = mapOf("score" to score, "date" to currentDateAndTime, "user" to "ArnauM" )
+        myRef.push().setValue(scoreData)
     }
 }
 

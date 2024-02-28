@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
-class LearningActivity  : ComponentActivity() {
+class GameActivity  : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -47,16 +47,16 @@ class LearningActivity  : ComponentActivity() {
                         ) {
                             Row {
                                 Button(onClick = {
-                                     val intent = Intent(this@LearningActivity, WikiSetas::class.java)
+                                    val intent = Intent(this@GameActivity, Puntuaciones::class.java)
                                     startActivity(intent)
                                 }) {
-                                    Text(text = "WIKISETA", fontSize = 24.sp)
+                                    Text(text = "PUNTUACIONES", fontSize = 24.sp)
                                 }
 
                                 Spacer(modifier = Modifier.width(16.dp))
 
                                 Button(onClick = {
-                                    val intent = Intent(this@LearningActivity, GameActivity::class.java)
+                                    val intent = Intent(this@GameActivity, QuizActivity::class.java)
                                     startActivity(intent)
                                 }) {
                                     Text(text = "GAME", fontSize = 24.sp)
