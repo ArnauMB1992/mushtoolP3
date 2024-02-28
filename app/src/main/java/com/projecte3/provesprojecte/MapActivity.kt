@@ -1,6 +1,7 @@
 package com.projecte3.provesprojecte
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -151,7 +152,8 @@ class MapActivity : ComponentActivity(), MapListener {
 
         val btnBack = findViewById<Button>(R.id.btnBack)
         btnBack.setOnClickListener {
-            finish()
+            val intent = Intent(this, MushroomActivity::class.java)
+            startActivity(intent)
         }
 
         // Obtener publicaciones de Firestore y agregarlas como marcadores

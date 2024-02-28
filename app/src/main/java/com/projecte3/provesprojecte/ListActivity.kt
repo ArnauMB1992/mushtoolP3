@@ -33,14 +33,22 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SetaManager.loadSetas()
-        val mushrooms = SetaManager.setas
-        setContent {
-            MushroomListScreen(mushrooms, this)
+        lifecycleScope.launch {
+            SetaManager.loadSetas()
+            val mushrooms = SetaManager.setas
+            withContext(Dispatchers.Main) {
+                setContent {
+                    MushroomListScreen(mushrooms, this@ListActivity)
+                }
+            }
         }
     }
 }

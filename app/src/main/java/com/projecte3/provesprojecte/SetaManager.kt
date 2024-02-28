@@ -7,6 +7,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.firebase.database.ktx.getValue
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 object SetaManager {
 
@@ -24,7 +27,7 @@ object SetaManager {
         }
     }
 
-    fun loadSetas() {
+    suspend fun loadSetas(): List<Seta> = suspendCancellableCoroutine { continuation ->
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 setas.clear()
@@ -35,10 +38,11 @@ object SetaManager {
                         setas.add(seta)
                     }
                 }
+                continuation.resume(setas)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle possible errors.
+                continuation.resumeWithException(databaseError.toException())
             }
         })
     }
