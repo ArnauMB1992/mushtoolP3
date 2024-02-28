@@ -80,6 +80,10 @@ class CameraActivity : AppCompatActivity() {
                 // Reproduce el sonido de guardado
                 val mediaPlayer = MediaPlayer.create(this, R.raw.save)
                 mediaPlayer.start()
+
+                // Iniciar MainActivity
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             } else {
                 Toast.makeText(this, "Porfavor captura una imagen y asegurate de que tengas activado el gps", Toast.LENGTH_SHORT).show()
             }
