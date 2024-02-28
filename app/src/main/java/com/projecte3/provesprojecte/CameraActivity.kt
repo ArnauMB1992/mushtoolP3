@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,9 +17,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.firebase.database.FirebaseDatabase
 import java.io.ByteArrayOutputStream
 import java.util.Calendar
-import java.util.Date
 
 class CameraActivity : AppCompatActivity() {
     private var locationManager: LocationManager? = null
@@ -28,15 +28,8 @@ class CameraActivity : AppCompatActivity() {
 
     private val REQUEST_IMAGE_CAPTURE = 1
 
-    private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            this@CameraActivity.location = location
-        }
-
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-        override fun onProviderEnabled(provider: String) {}
-        override fun onProviderDisabled(provider: String) {}
-    }
+    val database = FirebaseDatabase.getInstance()
+    val myRef = database.getReference("post")
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,21 +43,22 @@ class CameraActivity : AppCompatActivity() {
 
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, locationListener)
-        }
-
         captureButton.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(packageManager) != null) {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                // Check for location permissions
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                } else {
+                    Toast.makeText(this, "Porfavor activa los permisos de ubicación", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -76,30 +70,51 @@ class CameraActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             val dateTime = calendar.time
 
-            // Check if location is available
+            // Check if location and image are available
             if (location != null && imageBitmap != null) {
-                saveData(name, description, location!!.latitude, location!!.longitude, dateTime, imageBitmap!!)
+                val newSetaId = myRef.push().key
+                val seta = Seta(newSetaId, name, description, location!!.latitude, location!!.longitude, dateTime, encodeImageToBase64(imageBitmap!!))
+                myRef.child(newSetaId!!).setValue(seta)
+                Toast.makeText(this, "Guardado con éxito", Toast.LENGTH_SHORT).show()
+
+                // Reproduce el sonido de guardado
+                val mediaPlayer = MediaPlayer.create(this, R.raw.save)
+                mediaPlayer.start()
+
+                // Iniciar MainActivity
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             } else {
-                Toast.makeText(this, "Please capture an image and ensure location is available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Porfavor captura una imagen y asegurate de que tengas activado el gps", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun saveData(name: String, description: String, latitude: Double, longitude: Double, dateTime: Date?, image: Bitmap) {
+    private fun encodeImageToBase64(bitmap: Bitmap): String {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
-        val encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT)
-
-        val seta = Seta(name, description, latitude, longitude, dateTime, encodedImage)
-        SetaManager.addSeta(seta, this)
-        Toast.makeText(this, "Data saved", Toast.LENGTH_SHORT).show()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             imageBitmap = data?.extras?.get("data") as Bitmap
+            Toast.makeText(this, "Captura realizada", Toast.LENGTH_SHORT).show()
+
+            // Obtener la ubicación actual después de capturar la foto
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                Toast.makeText(this, "Ubicación guardada", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
