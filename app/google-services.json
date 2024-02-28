@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "551948717917",
+    "firebase_url": "https://mushtoolp3-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "mushtoolp3",
+    "storage_bucket": "mushtoolp3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551948717917:android:f727dfe3e8139e9bada2b4",
+        "android_client_info": {
+          "package_name": "com.projecte3.provesprojecte"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-QY9PE4gBbU7jYXXWy-7suvBwfc_YjcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

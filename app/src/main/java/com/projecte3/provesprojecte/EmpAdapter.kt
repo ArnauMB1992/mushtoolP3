@@ -26,7 +26,7 @@ class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentEmp = empList[position]
-        holder.tvEmpName.text = currentEmp.empName
+        holder.tvEmpNombre_comun.text = currentEmp.empNombre_comun
     }
 
     override fun getItemCount(): Int {
@@ -35,7 +35,7 @@ class EmpAdapter(private val empList: ArrayList<EmployeeModel>) :
 
     class ViewHolder(itemView: View, clickListener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
 
-        val tvEmpName : TextView = itemView.findViewById(R.id.tvEmpName)
+        val tvEmpNombre_comun : TextView = itemView.findViewById(R.id.tvEmpNombre_comun)
 
         init {
             itemView.setOnClickListener {
