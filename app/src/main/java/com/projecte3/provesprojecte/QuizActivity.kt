@@ -97,15 +97,16 @@ class QuizActivity : ComponentActivity() {
                                                 // Si todas las preguntas han sido respondidas, reinicia el juego
                                                 Toast.makeText(this@QuizActivity, "Puntuación: $score", Toast.LENGTH_LONG).show() // Display the score
                                                 currentQuestionIndex.value = 0
+                                                saveScoreToFirebase(score)
                                                 score = 0
 
                                             }
-                                            // Guardar la puntuación en Firebase
-                                            saveScoreToFirebase(score)
+
                                         } else {
                                             // Si la respuesta es incorrecta, vuelve a la primera pregunta
                                             Toast.makeText(this@QuizActivity, "Puntuación: $score", Toast.LENGTH_LONG).show() // Display the score
                                             currentQuestionIndex.value = 0
+                                            saveScoreToFirebase(score)
                                             score = 0
 
                                         }
