@@ -1,6 +1,7 @@
 package com.projecte3.provesprojecte
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -216,6 +218,17 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                     }
                 }
             )
+        }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        // boton para volver a MainActivity
+        Button(onClick = {
+            context.startActivity(Intent(context, MushroomActivity::class.java))
+        }) {
+            Text(text = "Volver")
         }
     }
 }

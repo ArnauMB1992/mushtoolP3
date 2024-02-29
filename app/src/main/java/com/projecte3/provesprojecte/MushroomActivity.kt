@@ -60,5 +60,16 @@ fun MushroomScreen() {
                 Text(text = "Listado")
             }
         }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            // boton para volver a MainActivity
+            Button(onClick = {
+                context.startActivity(Intent(context, MainActivity::class.java))
+            }) {
+                Text(text = "Volver a inicio")
+            }
+        }
     }
 }
