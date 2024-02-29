@@ -13,6 +13,7 @@ class WikiSetas : AppCompatActivity() {
     private lateinit var btnInsertData: Button
     private lateinit var btnFetchData: Button
     private lateinit var rootView: ConstraintLayout
+    private lateinit var btnBack: Button
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,11 @@ class WikiSetas : AppCompatActivity() {
 
         btnFetchData.setOnClickListener {
             val intent = Intent(this, FetchingActivity::class.java)
+            startActivity(intent)
+        }
+        btnBack = findViewById(R.id.btnBack)
+        btnBack.setOnClickListener {
+            val intent = Intent(this, LearningActivity::class.java)
             startActivity(intent)
         }
     }

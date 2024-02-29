@@ -1,6 +1,7 @@
 package com.projecte3.provesprojecte
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -106,11 +107,12 @@ class InsertionActivity : AppCompatActivity() {
                 etEmpObservaciones.text.clear()
                 etEmpComun.text.clear()
 
+                // Redirigir a WikiSetas después de guardar los datos
+                val intent = Intent(this, WikiSetas::class.java)
+                startActivity(intent)
 
             }.addOnFailureListener { err ->
                 Toast.makeText(this, "Error ${err.message}", Toast.LENGTH_LONG).show()
             }
-
     }
-
 }

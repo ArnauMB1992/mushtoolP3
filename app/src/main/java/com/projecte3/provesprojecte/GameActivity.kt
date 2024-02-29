@@ -64,11 +64,16 @@ class GameActivity  : ComponentActivity() {
                             }
                         }
 
-                        Button(
-                            onClick = { finish() },
-                            modifier = Modifier.align(Alignment.BottomCenter)
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.BottomCenter
                         ) {
-                            Text(text = "volver", fontSize = 24.sp)
+                            Button(onClick = {
+                                val intent = Intent(this@GameActivity, LearningActivity::class.java)
+                                startActivity(intent)
+                            }) {
+                                Text(text = "Volver")
+                            }
                         }
                     }
                 }

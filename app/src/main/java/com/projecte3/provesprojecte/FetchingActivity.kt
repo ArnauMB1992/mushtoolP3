@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,8 @@ class FetchingActivity : AppCompatActivity() {
     private lateinit var dbRef: DatabaseReference
     private lateinit var spinnerFilter: Spinner
     private lateinit var mAdapter: EmpAdapter // Declare mAdapter as a lateinit property
+    private lateinit var btnBack: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,11 @@ class FetchingActivity : AppCompatActivity() {
 
         getEmployeesData()
 
+        btnBack = findViewById(R.id.btnBack)
+        btnBack.setOnClickListener {
+            val intent = Intent(this, WikiSetas::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun filterByEmpComun(value: String) {

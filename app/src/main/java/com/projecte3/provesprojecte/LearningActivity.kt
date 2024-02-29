@@ -65,7 +65,10 @@ class LearningActivity  : ComponentActivity() {
                         }
 
                         Button(
-                            onClick = { finish() },
+                            onClick = {
+                                val intent = Intent(this@LearningActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            },
                             modifier = Modifier.align(Alignment.BottomCenter)
                         ) {
                             Text(text = "volver", fontSize = 24.sp)
