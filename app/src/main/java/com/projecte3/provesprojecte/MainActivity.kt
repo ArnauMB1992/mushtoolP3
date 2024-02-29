@@ -170,10 +170,6 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
                     Text(text = "APRENDER", fontSize = 30.sp)
                 }
             }
-            Button(onClick = {calGo = 5}, modifier = Modifier.padding(bottom = 10.dp)) {
-                Text(text = "Mensajes", fontSize = 30.sp)
-            }
-
             Button(onClick = {calGo = 6}) {
                 Text(text = "MushPhotos", fontSize = 30.sp)
             }
