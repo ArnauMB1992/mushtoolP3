@@ -3,6 +3,7 @@ package com.projecte3.provesprojecte
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -138,8 +139,11 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
         4 -> {
             context.startActivity(Intent(context, LearningActivity::class.java))
         }
-        7 -> {
-            context.startActivity(Intent(context, BackActivity::class.java))
+        5 -> {
+            val url = "https://github.com/ArnauMB1992/mushtoolP3"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            context.startActivity(intent)
         }
     }
 
@@ -170,8 +174,8 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
                     Text(text = "APRENDER", fontSize = 30.sp)
                 }
             }
-            Button(onClick = {calGo = 6}) {
-                Text(text = "MushPhotos", fontSize = 30.sp)
+            Button(onClick = {calGo = 5}) {
+                Text(text = "MushTools", fontSize = 30.sp)
             }
         }
     }
