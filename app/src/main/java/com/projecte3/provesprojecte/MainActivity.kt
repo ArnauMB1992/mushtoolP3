@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this)
         setContent {
             ProvesProjecte3Theme {
                 // A surface container using the 'background' color from the theme

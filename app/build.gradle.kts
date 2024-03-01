@@ -56,6 +56,7 @@ android {
 
 dependencies {
 
+    implementation("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
