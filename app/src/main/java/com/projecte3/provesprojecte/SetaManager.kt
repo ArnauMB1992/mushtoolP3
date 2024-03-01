@@ -38,11 +38,15 @@ object SetaManager {
                         setas.add(seta)
                     }
                 }
-                continuation.resume(setas)
+                if (continuation.isActive) {
+                    continuation.resume(setas)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                continuation.resumeWithException(databaseError.toException())
+                if (continuation.isActive) {
+                    continuation.resumeWithException(databaseError.toException())
+                }
             }
         })
     }
