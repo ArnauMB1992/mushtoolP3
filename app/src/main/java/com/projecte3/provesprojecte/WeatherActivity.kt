@@ -2,9 +2,9 @@ package com.projecte3.provesprojecte
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import androidx.compose.ui.viewinterop.AndroidView
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,9 +61,6 @@ class WeatherActivity : AppCompatActivity() {
                     listOf("sol", "soleado", "cla", "des").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.sunny
                     listOf("nub", "nubes").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.nublado
                     listOf("lluv", "lluvia", "chu").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.rainy
-//                    listOf("nieve", "nev").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.snowy
-//                    listOf("torm", "tormenta", "dil").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.stormy
-//                    listOf("bru", "bruma", "neb", "niebla").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.foggy
                     else -> R.raw.default_weather
                 }
 
@@ -97,13 +96,11 @@ class WeatherActivity : AppCompatActivity() {
 
     @Composable
     private fun GlideImage(data: Int, contentDescription: String, modifier: Modifier) {
-        val painter = rememberImagePainter(data = data)
+        val context = LocalContext.current
+        val imageView = remember { ImageView(context) }
+        Glide.with(context).load(data).into(imageView)
 
-        Image(
-            painter = painter,
-            contentDescription = contentDescription,
-            modifier = modifier
-        )
+        AndroidView({ imageView }, modifier = modifier, update = {})
     }
 
     private suspend fun fetchWeatherData(weatherDescription: MutableState<String>, temperature: MutableState<String>, location: String) {
