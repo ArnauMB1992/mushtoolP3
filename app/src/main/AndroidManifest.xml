@@ -108,6 +108,7 @@
         <activity android:name=".MushroomActivity"></activity>
         <activity android:name=".ListActivity"></activity>
         <activity android:name=".WeatherActivity" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"></activity>
+        <activity android:name=".MadeFor" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"></activity>
     </application>
 
 </manifest>

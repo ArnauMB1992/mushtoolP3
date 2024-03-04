@@ -3,7 +3,6 @@ package com.projecte3.provesprojecte
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -142,10 +141,7 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
             context.startActivity(Intent(context, LearningActivity::class.java))
         }
         5 -> {
-            val url = "https://github.com/ArnauMB1992/mushtoolP3"
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
-            context.startActivity(intent)
+            context.startActivity(Intent(context, MadeFor::class.java))
         }
     }
 
