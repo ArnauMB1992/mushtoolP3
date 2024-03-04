@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -33,12 +33,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +51,7 @@ class ListActivity : ComponentActivity() {
             val mushrooms = SetaManager.setas
             withContext(Dispatchers.Main) {
                 setContent {
-                    MushroomListScreen(mushrooms, this@ListActivity)
+                    MushroomListScreen(mushrooms, this@ListActivity, lifecycleScope)
                 }
             }
         }
@@ -61,11 +64,20 @@ fun decodeBase64ToBitmap(base64String: String): Bitmap {
 }
 
 @Composable
-fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
+fun MushroomListScreen(mushrooms: List<Seta>, context: Context, lifecycleScope: LifecycleCoroutineScope) {
+    var mushrooms by remember { mutableStateOf(mushrooms) } // Initialize with the passed parameter
     var showDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showOptionsDialog by remember { mutableStateOf(false) }
     var selectedMushroom by remember { mutableStateOf<Seta?>(null) }
+
+    // Función para recargar las setas
+    val reloadMushrooms = {
+        lifecycleScope.launch {
+            val newMushrooms = SetaManager.loadSetas()
+            mushrooms = newMushrooms
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -73,6 +85,9 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
     ) {
         LazyColumn {
             items(mushrooms) { mushroom ->
+                val sdf = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+                val date = sdf.parse(mushroom.dateTime.toString())
+                val timeInMillis = date?.time
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -89,8 +104,9 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                         Text(text = "Descripcion: ${mushroom.descripcion}")
                         // Text(text = "Latitude: ${mushroom.latitud}")
                         // Text(text = "Longitude: ${mushroom.longitud}")
-                        Text(text = "Fecha: ${mushroom.dateTime}") // Muestra la fecha
-
+                        Text(text = "Fecha: ${
+                            SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault()).format(Date(timeInMillis ?: 0))
+                        }") // Muestra la fecha en formato dd-MM-yyyy HH:mm
                         val imageBitmap = decodeBase64ToBitmap(mushroom.encodedImage!!)
                         Image(
                             bitmap = imageBitmap.asImageBitmap(),
@@ -177,18 +193,6 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                             onValueChange = { newDescripcion = it },
                             label = { Text("Descripcion") }
                         )
-                        OutlinedTextField(
-                            value = newLatitud,
-                            onValueChange = { newLatitud = it },
-                            label = { Text("Latitud") },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-                        OutlinedTextField(
-                            value = newLongitud,
-                            onValueChange = { newLongitud = it },
-                            label = { Text("Longitud") },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
                     }
                 },
                 confirmButton = {
@@ -202,8 +206,14 @@ fun MushroomListScreen(mushrooms: List<Seta>, context: Context) {
                                     latitud = newLatitud.toDoubleOrNull() ?: mushroom.latitud,
                                     longitud = newLongitud.toDoubleOrNull() ?: mushroom.longitud
                                 )
-                                SetaManager.setas = SetaManager.setas.map { if (it == mushroom) updatedMushroom else it }
-                                    .toMutableList()
+                                SetaManager.updateSeta(updatedMushroom)
+                                    .addOnSuccessListener { updatedSeta ->
+                                        Toast.makeText(context, "Seta actualizada", Toast.LENGTH_SHORT).show()
+                                        (context as ListActivity).recreate() // Recargar la actividad después de la actualización
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(context, "Error al actualizar la seta: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
                             }
                         }
                     ) {

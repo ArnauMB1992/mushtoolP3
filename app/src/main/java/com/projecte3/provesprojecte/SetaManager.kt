@@ -1,5 +1,7 @@
 package com.projecte3.provesprojecte
 
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -25,6 +27,35 @@ object SetaManager {
                 }
             }
         }
+    }
+
+    fun updateSeta(seta: Seta): Task<Seta> {
+        val database = Firebase.database
+        val myRef = database.getReference("post")
+
+        val currentSetaRef = myRef.child(seta.id!!)
+        val taskCompletionSource = TaskCompletionSource<Seta>()
+        currentSetaRef.get().addOnSuccessListener { dataSnapshot ->
+            val currentSeta = dataSnapshot.getValue(Seta::class.java)
+
+            if (seta.nombre == null) seta.nombre = currentSeta?.nombre
+            if (seta.descripcion == null) seta.descripcion = currentSeta?.descripcion
+            if (seta.latitud == null) seta.latitud = currentSeta?.latitud
+            if (seta.longitud == null) seta.longitud = currentSeta?.longitud
+            if (seta.locationSerialized == null) seta.locationSerialized = currentSeta?.locationSerialized
+            if (seta.dateTime == null) seta.dateTime = currentSeta?.dateTime
+            if (seta.encodedImage == null || seta.encodedImage == "") seta.encodedImage = currentSeta?.encodedImage
+
+            currentSetaRef.setValue(seta).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    taskCompletionSource.setResult(seta)
+                } else {
+                    taskCompletionSource.setException(task.exception!!)
+                }
+            }
+        }
+
+        return taskCompletionSource.task
     }
 
     suspend fun loadSetas(): List<Seta> = suspendCancellableCoroutine { continuation ->

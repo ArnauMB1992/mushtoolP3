@@ -66,87 +66,42 @@ class MapActivity : ComponentActivity(), MapListener {
         }
         controller.setZoom(10.0)
 
-        map.overlays.add(mMyLocationOverlay)
+        val mapEventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
 
-        // Crear un MapEventsReceiver
-        val receiver = object : MapEventsReceiver {
-            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                var closestSeta: Seta? = null
-                var minDistance = Double.MAX_VALUE
+            val TOLERANCE = 0.01 // Radio de tolerancia en grados
 
-                for (seta in SetaManager.setas) {
-                    val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
-                    if (distance < minDistance) {
-                        minDistance = distance
-                        closestSeta = seta
+            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                p?.let {
+                    val closestSeta = findClosestSeta(it)
+                    closestSeta?.let { seta ->
+                        val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
+                        if (distance < TOLERANCE) {
+                            val message = "Nombre: ${seta.nombre}, Descripción: ${seta.descripcion}"
+                            Toast.makeText(this@MapActivity, message, Toast.LENGTH_LONG).show()
+                            return true
+                        }
                     }
                 }
-
-                if (closestSeta != null) {
-                    // Mostrar un mensaje con el nombre de la seta más cercana
-                    Toast.makeText(this@MapActivity, "La seta más cercana es ${closestSeta.nombre}, es ${closestSeta.descripcion}", Toast.LENGTH_SHORT).show()
-                }
-                return true
+                return false
             }
 
-            // Eliminar todos los marcadores que se encuentren en la posición del punto en el que se hizo clic largo
             override fun longPressHelper(p: GeoPoint?): Boolean {
-                if (p != null) {
-                    var closestSeta = findClosestSeta(p)
-                    if (closestSeta != null) {
-                        val editText = EditText(this@MapActivity)
-                        editText.setText(closestSeta!!.nombre)
-
-                        AlertDialog.Builder(this@MapActivity)
-                            .setTitle("Editar seta")
-                            .setMessage("Introduce el nuevo nombre de la seta")
-                            .setView(editText)
-                            .setPositiveButton("Aceptar") { _, _ ->
-                                val newName = editText.text.toString()
-                                closestSeta = closestSeta!!.copy(nombre = newName)
-                                // Actualizar el título del marcador en el mapa
-                                val marker = map.overlays.firstOrNull { it is Marker && it.position.latitude == closestSeta!!.latitud && it.position.longitude == closestSeta!!.longitud } as? Marker
-                                if (marker != null) {
-                                    marker.title = newName
-                                    map.invalidate() // Refrescar el mapa para mostrar el nuevo nombre en el marcador
-                                }
-
-                                // Actualizar el nombre de la seta en la lista de setas
-                                val setaIndex = SetaManager.setas.indexOfFirst { it.latitud == closestSeta!!.latitud && it.longitud == closestSeta!!.longitud }
-                                if (setaIndex != -1) {
-                                    SetaManager.setas[setaIndex] = closestSeta!!
-                                    // Los cambios en los objetos de Seta se realizan directamente en Firebase
-                                }
-                            }
-                            .setNegativeButton("Cancelar", null)
-                            .show()
+                p?.let {
+                    val closestSeta = findClosestSeta(it)
+                    closestSeta?.let { seta ->
+                        val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
+                        if (distance < TOLERANCE) {
+                            showEditDialog(seta)
+                            return true
+                        }
                     }
                 }
-                return true
+                return false
             }
+        })
+        map.overlays.add(0, mapEventsOverlay)
 
-            fun findClosestSeta(p: GeoPoint): Seta? {
-
-                var closestSeta: Seta? = null
-                var minDistance = Double.MAX_VALUE
-
-                for (seta in SetaManager.setas) {
-                    val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
-                    if (distance < minDistance) {
-                        minDistance = distance
-                        closestSeta = seta
-                    }
-                }
-                return closestSeta
-            }
-        }
-
-        // Crear un MapEventsOverlay y agregarlo al mapa
-        val overlay = MapEventsOverlay(receiver)
-        map.overlays.add(overlay)
-
-        // Cargar los marcadores guardados
-        // loadMarkerPreferences() // This line is commented out because the function is not defined
+        map.overlays.add(mMyLocationOverlay)
 
         map.addMapListener(this)
 
@@ -158,6 +113,44 @@ class MapActivity : ComponentActivity(), MapListener {
 
         // Obtener publicaciones de Firestore y agregarlas como marcadores
         fetchPostsAndAddMarkers()
+    }
+
+    // Función para encontrar la seta más cercana a un punto dado
+    private fun findClosestSeta(p: GeoPoint): Seta? {
+        var closestSeta: Seta? = null
+        var minDistance = Double.MAX_VALUE
+        for (seta in SetaManager.setas) {
+            val distance = haversine(p.latitude, p.longitude, seta.latitud!!, seta.longitud!!)
+            if (distance < minDistance) {
+                minDistance = distance
+                closestSeta = seta
+            }
+        }
+        return closestSeta
+    }
+
+    // Función para mostrar un cuadro de diálogo que permite al usuario editar el nombre de la seta
+    private fun showEditDialog(seta: Seta) {
+        val editText = EditText(this)
+        editText.setText(seta.nombre)
+        AlertDialog.Builder(this)
+            .setTitle("Editar nombre de la seta")
+            .setView(editText)
+            .setPositiveButton("Guardar") { _, _ ->
+                val newName = editText.text.toString()
+                if (newName.isNotBlank()) {
+                    seta.nombre = newName
+                    SetaManager.updateSeta(seta)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Nombre de la seta actualizado", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Error al actualizar el nombre de la seta: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun fetchPostsAndAddMarkers() {
