@@ -154,7 +154,7 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
-                text = "Hello $name!",
+                text = "Hello!",
                 fontSize = 40.sp, // Increase font size
                 modifier = modifier,
                 color = Color.White // Cambia el color del texto a blanco
