@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
@@ -58,6 +59,13 @@ fun MadeForContent() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Agregar la imagen
+            val image2: Painter = painterResource(id = R.drawable.setapp)
+            Image(
+                painter = image2,
+                contentDescription = "Logo de SETAPP",
+                modifier = Modifier.fillMaxWidth().height(200.dp) // Cambia la altura a 100.dp
+            )
             // Primer bloque: Textos
             Column {
                 Text(
@@ -118,6 +126,7 @@ fun MadeForContent() {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                     color = Color.White
                 )
                 Text(
@@ -125,6 +134,7 @@ fun MadeForContent() {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                     color = Color.White
                 )
                 Text(
@@ -132,12 +142,17 @@ fun MadeForContent() {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                     color = Color.White
                 )
+            }
+            Spacer(modifier = Modifier.height(80.dp)) // Agrega un salto de línea
+            // boton para volver a MainActivity
+            Row(horizontalArrangement = Arrangement.Center) {
                 Button(onClick = {
                     context.startActivity(Intent(context, MushroomActivity::class.java))
                 }) {
-                    androidx.compose.material3.Text(text = "Volver")
+                    Text(text = "Volver", color = Color.White)
                 }
             }
         }

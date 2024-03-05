@@ -16,10 +16,10 @@ class Seta() : Serializable {
     constructor(id: String?, name: String, description: String, latitud: Double, longitud: Double, dateTime: Date?, encodedImage: String) : this() {
         this.id = id
         this.nombre = name
-        this.descripcion = description
         this.latitud = latitud
-        this.longitud = longitud
         this.dateTime = dateTime
+        this.longitud = longitud
+        this.descripcion = description
         this.encodedImage = encodedImage
         this.locationSerialized = "$latitud,$longitud"
     }

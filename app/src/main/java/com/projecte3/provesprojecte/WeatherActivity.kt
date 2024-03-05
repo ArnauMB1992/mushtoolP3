@@ -1,5 +1,6 @@
 package com.projecte3.provesprojecte
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -7,13 +8,16 @@ import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -24,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -108,15 +113,24 @@ class WeatherActivity : AppCompatActivity() {
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = {
-                    if (location.value.isNotEmpty()) {
-                        scope.launch {
-                            fetchWeatherData(weatherDescription, temperature, location.value)
-                            fetchForecastData(forecast, location.value) // Fetch the forecast data
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    val context = LocalContext.current
+                    Button(onClick = {
+                        if (location.value.isNotEmpty()) {
+                            scope.launch {
+                                fetchWeatherData(weatherDescription, temperature, location.value)
+                                fetchForecastData(forecast, location.value) // Fetch the forecast data
+                            }
                         }
+                    }, modifier = Modifier.weight(1f)) {
+                        Text("Consultar")
                     }
-                }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Consultar")
+                    Spacer(modifier = Modifier.width(16.dp)) // Agrega un espacio entre los botones
+                    Button(onClick = {
+                        context.startActivity(Intent(context, MainActivity::class.java))
+                    }, modifier = Modifier.weight(1f)) {
+                        Text(text = "Volver", color = Color.White)
+                    }
                 }
             }
         }
@@ -152,12 +166,11 @@ class WeatherActivity : AppCompatActivity() {
                     temperature.value = ((temperatureJson.getDouble("temp") - 273.15).toInt()).toString()
                 }
             } catch (e: IOException) {
-                // Handle the exception here
-                // For example, you can log the error or show a message to the user
                 Log.e("WeatherActivity", "Error al obtener los datos del clima", e)
             }
         }
     }
+
     private suspend fun fetchForecastData(forecast: MutableState<List<String>>, location: String) {
         val apiKey = BuildConfig.OpenWeatherApiKey
         val request = Request.Builder()

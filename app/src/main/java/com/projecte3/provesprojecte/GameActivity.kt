@@ -1,6 +1,5 @@
 package com.projecte3.provesprojecte
 
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -29,7 +28,6 @@ class GameActivity  : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ProvesProjecte3Theme {
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -56,9 +54,7 @@ class GameActivity  : ComponentActivity() {
                                 }) {
                                     Text(text = "PUNTUACIONES", fontSize = 24.sp)
                                 }
-
                                 Spacer(modifier = Modifier.width(16.dp))
-
                                 Button(onClick = {
                                     val intent = Intent(this@GameActivity, QuizActivity::class.java)
                                     startActivity(intent)
@@ -67,7 +63,6 @@ class GameActivity  : ComponentActivity() {
                                 }
                             }
                         }
-
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.BottomCenter
