@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/mush">
+
+    <EditText
+        android:id="@+id/etEmpNombre_comun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Nombre_comun"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpNombre_cientifico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Nombre_cientifico"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpComestible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Comestible"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpSombrero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Sombrero"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpPie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Pie"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpFoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Foto"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpHabitat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="Seta Habitat"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etEmpObservaciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="Seta Observaciones"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/etEmpComun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="Seta Comun"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/btnUpdateData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Actualizar" />
+
+
+</LinearLayout>

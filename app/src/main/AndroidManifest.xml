@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ProvesProjecte3"
+        tools:targetApi="31">
+        <activity
+            android:name=".BackActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/Theme.ProvesProjecte3" />
+        <activity
+            android:name=".CameraActivity"
+            android:exported="true"
+            android:label="Cámara"
+            android:theme="@style/Theme.AppCompat.Light" /> <!-- Change this line -->
+        <activity
+            android:name=".CaptureActivity"
+            android:exported="true"
+            android:label="Captura"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name=".MapActivity"
+            android:exported="true"
+            android:label="El mapa de mis setas"
+            android:theme="@style/Theme.ProvesProjecte3" />
+        <activity
+            android:name=".LearningActivity"
+            android:theme="@style/Theme.ProvesProjecte3" />
+
+        <activity
+            android:name=".GameActivity"
+            android:theme="@style/Theme.ProvesProjecte3" />
+
+
+        <activity
+            android:name=".QuizActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        </activity>
+
+        <activity
+            android:name=".Puntuaciones"
+            android:theme="@style/Theme.ProvesProjecte3"
+            />
+
+        <activity
+            android:name=".EmpAdapter"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".EmployeeDetailsActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".EmployeeModel"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".FetchingActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+        <activity
+            android:name=".InsertionActivity"
+            android:theme="@style/Theme.AppCompat"
+            />
+
+        <activity
+            android:name=".WikiSetas"
+            android:theme="@style/Theme.AppCompat"
+            />
+
+        <activity
+            android:name=".com.projecte3.provesprojecte.SetaDetailActivity"
+            android:theme="@style/Theme.ProvesProjecte3"
+            />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.ProvesProjecte3">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity android:name=".MushroomActivity"></activity>
+        <activity android:name=".ListActivity"></activity>
+        <activity android:name=".WeatherActivity" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"></activity>
+        <activity android:name=".MadeFor" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"></activity>
+    </application>
+
+</manifest>
