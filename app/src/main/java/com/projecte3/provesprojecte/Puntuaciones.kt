@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -40,18 +44,31 @@ class Puntuaciones : ComponentActivity() {
             ProvesProjecte3Theme {
                 var scores by remember { mutableStateOf(listOf<Triple<Int, String, String>>()) }
 
+                val backgroundImage = painterResource(id = R.drawable.mush)
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+                    Image(
+                        painter = backgroundImage,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds
+                    )
                     Column(modifier = Modifier.padding(16.dp)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.setapp),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = "User", modifier = Modifier.weight(1f))
-                            Text(text = "Score", modifier = Modifier.weight(1f))
-                            Text(text = "Date", modifier = Modifier.weight(1f))
+                            Text(text = "Nombre", modifier = Modifier.weight(1f), color = Color.White)
+                            Text(text = "Puntuación", modifier = Modifier.weight(1f), color = Color.White)
+                            Text(text = "Fecha", modifier = Modifier.weight(1f), color = Color.White)
                         }
                         scores.forEach { (score, date, user) ->
                             Spacer(modifier = Modifier.height(8.dp))
@@ -59,9 +76,9 @@ class Puntuaciones : ComponentActivity() {
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = user, modifier = Modifier.weight(1f))
-                                Text(text = score.toString(), modifier = Modifier.weight(1f))
-                                Text(text = date, modifier = Modifier.weight(1f))
+                                Text(text = user, modifier = Modifier.weight(1f), color = Color.White)
+                                Text(text = score.toString(), modifier = Modifier.weight(1f), color = Color.White)
+                                Text(text = date, modifier = Modifier.weight(1f), color = Color.White)
                             }
                         }
                     }

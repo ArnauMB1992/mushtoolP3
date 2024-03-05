@@ -45,6 +45,10 @@ class LearningActivity  : ComponentActivity() {
                             modifier = Modifier.align(Alignment.Center),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Image(
+                            painter = painterResource(id = R.drawable.setapp),
+                            contentDescription = null
+                            )
                             Row {
                                 Button(onClick = {
                                      val intent = Intent(this@LearningActivity, WikiSetas::class.java)

@@ -148,8 +148,13 @@ fun Greeting(name: String , modifier: Modifier = Modifier) {
     //
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally){
+            Image(
+                painter = painterResource(id = R.drawable.setapp),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
             Text(
-                text = "Hello $name!",
+                text = "Hello!",
                 fontSize = 40.sp, // Increase font size
                 modifier = modifier,
                 color = Color.White // Cambia el color del texto a blanco
