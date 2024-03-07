@@ -1,5 +1,7 @@
 package com.projecte3.provesprojecte
+
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.InputType
@@ -219,6 +221,9 @@ class QuizActivity : ComponentActivity() {
                                         if (option == currentQuestion.correctOption) {
                                             // If the answer is correct, calculate the score based on remaining time and question difficulty
                                             score += remainingTime.value * currentQuestion.dificultad
+                                            // Play the correct sound
+                                            val correctSound = MediaPlayer.create(this@QuizActivity, R.raw.correcto)
+                                            correctSound.start()
                                             currentQuestionIndex.value++
                                             if (currentQuestionIndex.value == orderedQuestions.size) {
                                                 // If all questions have been answered, restart the game
@@ -234,6 +239,9 @@ class QuizActivity : ComponentActivity() {
                                             currentQuestionIndex.value = 0
                                             checkAndSaveScore(score)
                                             score = 0
+                                            // Play the GameOver sound
+                                            val gameOverSound = MediaPlayer.create(this@QuizActivity, R.raw.gameover)
+                                            gameOverSound.start()
                                             // Cancel the previous timer and start a new one
                                             timer?.cancel()
                                             startTimer(remainingTime, currentQuestionIndex)
@@ -292,6 +300,9 @@ class QuizActivity : ComponentActivity() {
                         builder.show()
                     }
                 }
+                // Play the TimeOver sound
+                val timeOverSound = MediaPlayer.create(this@QuizActivity, R.raw.tiempo)
+                timeOverSound.start()
             }
         }.start()
     }

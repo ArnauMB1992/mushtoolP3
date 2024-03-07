@@ -78,7 +78,6 @@ class WeatherActivity : AppCompatActivity() {
 
                 GlideImage(
                     data = weatherImage,
-                    contentDescription = "Imagen del clima",
                     modifier = Modifier.fillMaxWidth().height(200.dp)
                 )
 
@@ -137,7 +136,7 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun GlideImage(data: Int, contentDescription: String, modifier: Modifier) {
+    private fun GlideImage(data: Int, modifier: Modifier) {
         val context = LocalContext.current
         val imageView = remember { ImageView(context) }
         Glide.with(context).load(data).into(imageView)
