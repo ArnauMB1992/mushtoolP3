@@ -1,95 +1,84 @@
 package com.projecte3.provesprojecte
 
+
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import androidx.compose.ui.unit.sp
+import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
-class MushroomActivity : ComponentActivity() {
+class MushroomActivity  : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MushroomScreen()
-        }
-    }
-}
+            ProvesProjecte3Theme {
 
-@Preview
-@Composable
-fun MushroomScreen() {
-    val context = LocalContext.current
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF3C3F41), Color(0xFF605C3C)),
-                    startY = 0f
-                )
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = rememberImagePainter(data = R.drawable.mush),
-            contentDescription = "Background",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = rememberImagePainter(data = R.drawable.setapp),
-                contentDescription = "App Image",
-                modifier = Modifier.offset(y = -100.dp) // Asume que 1 dp es igual a 0.025 cm
-            )
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(onClick = {
-                    context.startActivity(Intent(context, MapActivity::class.java))
-                }) {
-                    Text(text = "Mapa")
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.mush),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.setapp),
+                                contentDescription = null
+                            )
+                            Row {
+                                Button(onClick = {
+                                    val intent = Intent(this@MushroomActivity, ListActivity::class.java)
+                                    startActivity(intent)
+                                }) {
+                                    Text(text = "LISTADO", fontSize = 24.sp)
+                                }
+
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                Button(onClick = {
+                                    val intent = Intent(this@MushroomActivity, MapActivity::class.java)
+                                    startActivity(intent)
+                                }) {
+                                    Text(text = "MAPA", fontSize = 24.sp)
+                                }
+                            }
+                        }
+
+                        Button(
+                            onClick = {
+                                val intent = Intent(this@MushroomActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            },
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        ) {
+                            Text(text = "volver", fontSize = 24.sp)
+                        }
+                    }
                 }
-                // boton de mostrar listado de setas guardadas llamado listado
-                Button(onClick = {
-                    context.startActivity(Intent(context, ListActivity::class.java))
-                }) {
-                    Text(text = "Listado")
-                }
-            }
-        }
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            // boton para volver a MainActivity
-            Button(onClick = {
-                context.startActivity(Intent(context, MainActivity::class.java))
-            }) {
-                Text(text = "Volver a inicio")
             }
         }
     }

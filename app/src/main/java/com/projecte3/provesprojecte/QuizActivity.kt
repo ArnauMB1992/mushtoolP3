@@ -310,6 +310,7 @@ class QuizActivity : ComponentActivity() {
                             dialog.dismiss()
                             checkAndSaveScore(score)
                         }
+                    Log.d("QuizActivity", "Showing dialog") // Agregar declaración de registro aquí
                     builder.show()
                 }
                 // Reproducir el sonido de tiempo agotado
