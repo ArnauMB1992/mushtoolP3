@@ -247,7 +247,7 @@ class QuizActivity : ComponentActivity() {
                                             gameOverSound.start()
                                             // Cancel the previous timer and start a new one
                                             timer?.cancel()
-                                            //startTimer(remainingTime, currentQuestionIndex)
+                                            startTimer(remainingTime, currentQuestionIndex)
                                         }
                                     }
                                 ) {
