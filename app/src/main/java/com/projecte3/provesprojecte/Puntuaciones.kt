@@ -33,88 +33,88 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
-class Puntuaciones : ComponentActivity() {
-    private lateinit var database: DatabaseReference
+class Puntuaciones : ComponentActivity() { // Define la clase Puntuaciones que extiende de ComponentActivity
+    private lateinit var database: DatabaseReference // Declara una referencia a la base de datos de Firebase
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        database = FirebaseDatabase.getInstance().getReference("scores")
+    override fun onCreate(savedInstanceState: Bundle?) { // Sobrescribe el método onCreate de la actividad
+        super.onCreate(savedInstanceState) // Llama al método onCreate de la clase base
+        database = FirebaseDatabase.getInstance().getReference("scores") // Obtiene una referencia a la ubicación "scores" en la base de datos
 
-        setContent {
-            ProvesProjecte3Theme {
-                var scores by remember { mutableStateOf(listOf<Triple<Int, String, String>>()) }
+        setContent { // Establece el contenido de la actividad
+            ProvesProjecte3Theme { // Aplica el tema personalizado de la aplicación
+                var scores by remember { mutableStateOf(listOf<Triple<Int, String, String>>()) } // Define un estado para almacenar las puntuaciones
 
-                val backgroundImage = painterResource(id = R.drawable.mush)
+                val backgroundImage = painterResource(id = R.drawable.mush) // Obtiene el recurso de imagen de fondo
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                Box( // Crea un contenedor Box
+                    modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo del contenedor
+                    contentAlignment = Alignment.Center // Alinea el contenido al centro del contenedor
                 ) {
-                    Image(
-                        painter = backgroundImage,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
+                    Image( // Muestra una imagen
+                        painter = backgroundImage, // Establece el pintor de la imagen
+                        contentDescription = null, // Descripción de contenido nula
+                        modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo de la imagen
+                        contentScale = ContentScale.FillBounds // Escala el contenido para que llene completamente el área del contenedor
                     )
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Image(
-                            painter = painterResource(id = R.drawable.setapp),
-                            contentDescription = null,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                    Column(modifier = Modifier.padding(16.dp)) { // Crea una columna con un relleno de 16dp
+                        Image( // Muestra una imagen
+                            painter = painterResource(id = R.drawable.setapp), // Establece el pintor de la imagen
+                            contentDescription = null, // Descripción de contenido nula
+                            modifier = Modifier.align(Alignment.CenterHorizontally) // Alinea la imagen al centro horizontalmente
                         )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        Row( // Crea una fila
+                            modifier = Modifier.fillMaxWidth(), // Establece el ancho máximo de la fila
+                            horizontalArrangement = Arrangement.SpaceBetween // Distribuye los elementos horizontalmente con espacio entre ellos
                         ) {
-                            Text(text = "Nombre", modifier = Modifier.weight(1f), color = Color.White)
-                            Text(text = "Puntuación", modifier = Modifier.weight(1f), color = Color.White)
-                            Text(text = "Fecha", modifier = Modifier.weight(1f), color = Color.White)
+                            Text(text = "Nombre", modifier = Modifier.weight(1f), color = Color.White) // Muestra un texto para el nombre con peso 1
+                            Text(text = "Puntuación", modifier = Modifier.weight(1f), color = Color.White) // Muestra un texto para la puntuación con peso 1
+                            Text(text = "Fecha", modifier = Modifier.weight(1f), color = Color.White) // Muestra un texto para la fecha con peso 1
                         }
-                        scores.forEach { (score, date, user) ->
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                        scores.forEach { (score, date, user) -> // Itera sobre las puntuaciones
+                            Spacer(modifier = Modifier.height(8.dp)) // Agrega un espacio vertical de 8dp
+                            Row( // Crea una fila
+                                modifier = Modifier.fillMaxWidth(), // Establece el ancho máximo de la fila
+                                horizontalArrangement = Arrangement.SpaceBetween // Distribuye los elementos horizontalmente con espacio entre ellos
                             ) {
-                                Text(text = user, modifier = Modifier.weight(1f), color = Color.White)
-                                Text(text = score.toString(), modifier = Modifier.weight(1f), color = Color.White)
-                                Text(text = date, modifier = Modifier.weight(1f), color = Color.White)
+                                Text(text = user, modifier = Modifier.weight(1f), color = Color.White) // Muestra el nombre de usuario con peso 1
+                                Text(text = score.toString(), modifier = Modifier.weight(1f), color = Color.White) // Muestra la puntuación con peso 1
+                                Text(text = date, modifier = Modifier.weight(1f), color = Color.White) // Muestra la fecha con peso 1
                             }
                         }
                     }
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomCenter
+                    Box( // Crea otro contenedor Box
+                        modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo del contenedor
+                        contentAlignment = Alignment.BottomCenter // Alinea el contenido en la parte inferior y centro del contenedor
                     ) {
-                        // boton para ir a GameActivity
+                        // Botón para volver a GameActivity
                         Button(onClick = {
-                            startActivity(Intent(this@Puntuaciones, GameActivity::class.java))
+                            startActivity(Intent(this@Puntuaciones, GameActivity::class.java)) // Inicia GameActivity al hacer clic en el botón
                         }) {
-                            Text(text = "Volver")
+                            Text(text = "Volver") // Muestra el texto "Volver" en el botón
                         }
                     }
                 }
 
-                database.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val allScores = dataSnapshot.children.mapNotNull { snapshot ->
-                            val score = snapshot.child("score").getValue(Int::class.java)
-                            val date = snapshot.child("date").getValue(String::class.java)
-                            val user = snapshot.child("user").getValue(String::class.java)
-                            if (score != null && date != null && user != null) {
-                                Triple(score, date, user)
+                database.addValueEventListener(object : ValueEventListener { // Agrega un listener para cambios en los datos de Firebase
+                    override fun onDataChange(dataSnapshot: DataSnapshot) { // Método invocado cuando los datos cambian
+                        val allScores = dataSnapshot.children.mapNotNull { snapshot -> // Mapea los datos de la instantánea
+                            val score = snapshot.child("score").getValue(Int::class.java) // Obtiene la puntuación
+                            val date = snapshot.child("date").getValue(String::class.java) // Obtiene la fecha
+                            val user = snapshot.child("user").getValue(String::class.java) // Obtiene el nombre de usuario
+                            if (score != null && date != null && user != null) { // Verifica que los datos no sean nulos
+                                Triple(score, date, user) // Devuelve una tripleta con los datos
                             } else {
-                                null
+                                null // Devuelve nulo si algún dato es nulo
                             }
                         }
-                        // Ordenar las puntuaciones en orden descendente y tomar las 10 más altas
-                        scores = allScores.sortedByDescending { it.first }.take(10)
+                        // Ordena las puntuaciones en orden descendente y toma las 10 más altas
+                        scores = allScores.sortedByDescending { it.first }.take(10) // Actualiza el estado de las puntuaciones
                     }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle possible errors.
-                        println("Error: ${databaseError.message}")
+                    override fun onCancelled(databaseError: DatabaseError) { // Método invocado cuando se cancela la operación
+                        // Maneja posibles errores
+                        println("Error: ${databaseError.message}") // Imprime el mensaje de error
                     }
                 })
             }
