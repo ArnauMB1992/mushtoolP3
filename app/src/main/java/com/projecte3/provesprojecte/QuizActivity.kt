@@ -139,16 +139,19 @@ class QuizActivity : ComponentActivity() {
         ),
     )
 
-    private var currentQuestionIndex = 0
-    private var score = 0
-    private var timer: CountDownTimer? = null
+    // Índice de pregunta actual y puntuación.
+    private var currentQuestionIndex = 0 // Índice de la pregunta actual
+    private var score = 0 // Puntuación del jugador
+    private var timer: CountDownTimer? = null // Temporizador para el tiempo de respuesta
 
-    private val easyQuestions = questions.filter { it.dificultad == 1 }.shuffled()
-    private val mediumQuestions = questions.filter { it.dificultad == 2 }.shuffled()
-    private val hardQuestions = questions.filter { it.dificultad == 3 }.shuffled()
+    // Separación de preguntas por dificultad y aleatorización.
+    private val easyQuestions = questions.filter { it.dificultad == 1 }.shuffled() // Preguntas fáciles
+    private val mediumQuestions = questions.filter { it.dificultad == 2 }.shuffled() // Preguntas de dificultad media
+    private val hardQuestions = questions.filter { it.dificultad == 3 }.shuffled() // Preguntas difíciles
 
     private val orderedQuestions = easyQuestions + mediumQuestions + hardQuestions // Une las listas en el orden correcto
 
+    // Función de creación de la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -156,6 +159,7 @@ class QuizActivity : ComponentActivity() {
                 val currentQuestionIndex = remember { mutableStateOf(0) }
 
                 Box(modifier = Modifier.fillMaxSize()) {
+                    // Fondo de pantalla con imagen.
                     Image(
                         painter = painterResource(id = R.drawable.mush),
                         contentDescription = null,
@@ -175,18 +179,21 @@ class QuizActivity : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(16.dp)
                         ) {
+                            // Mostrar la puntuación actual
                             Text(
                                 text = "Puntuación: $score",
                                 fontSize = 24.sp,
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 color = Color.White // Cambia el color del texto a blanco
                             )
+                            // Mostrar el tiempo restante
                             Text(
                                 text = "Tiempo: ${remainingTime.value}",
                                 fontSize = 24.sp,
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 color = Color.White // Cambia el color del texto a blanco
                             )
+                            // Mostrar la dificultad de la pregunta actual
                             Text(
                                 text = "Dificultad: ${
                                     when (currentQuestion.dificultad) {
@@ -200,6 +207,7 @@ class QuizActivity : ComponentActivity() {
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 color = Color.White // Cambia el color del texto a blanco
                             )
+                            // Mostrar la imagen de la pregunta actual
                             Image(
                                 painter = painterResource(id = currentQuestion.image),
                                 contentDescription = null,
@@ -209,40 +217,42 @@ class QuizActivity : ComponentActivity() {
                                     .border(4.dp, Color.Black),
                                 contentScale = ContentScale.Crop
                             )
+                            // Mostrar el texto de la pregunta actual
                             Surface(
                                 color = Color.White,
                                 modifier = Modifier.padding(8.dp)
                             ) {
                                 Text(text = currentQuestion.question, fontSize = 24.sp)
                             }
+                            // Mostrar las opciones de respuesta y manejar las respuestas del usuario
                             currentQuestion.options.forEach { option ->
                                 Button(
                                     onClick = {
                                         if (option == currentQuestion.correctOption) {
-                                            // If the answer is correct, calculate the score based on remaining time and question difficulty
+                                            // Si la respuesta es correcta, calcular la puntuación
                                             score += remainingTime.value * currentQuestion.dificultad
-                                            // Play the correct sound
+                                            // Reproducir el sonido correcto
                                             val correctSound = MediaPlayer.create(this@QuizActivity, R.raw.correcto)
                                             correctSound.start()
                                             currentQuestionIndex.value++
                                             if (currentQuestionIndex.value == orderedQuestions.size) {
-                                                // If all questions have been answered, restart the game
+                                                // Si se han respondido todas las preguntas, reiniciar el juego
                                                 currentQuestionIndex.value = 0
                                                 checkAndSaveScore(score)
                                                 score = 0
                                             }
-                                            // Cancel the previous timer and start a new one
+                                            // Cancelar el temporizador anterior y comenzar uno nuevo
                                             timer?.cancel()
                                             startTimer(remainingTime, currentQuestionIndex)
                                         } else {
-                                            // If the answer is incorrect, go back to the first question
+                                            // Si la respuesta es incorrecta, reiniciar al inicio
                                             currentQuestionIndex.value = 0
                                             checkAndSaveScore(score)
                                             score = 0
-                                            // Play the GameOver sound
+                                            // Reproducir el sonido de fin de juego
                                             val gameOverSound = MediaPlayer.create(this@QuizActivity, R.raw.gameover)
                                             gameOverSound.start()
-                                            // Cancel the previous timer and start a new one
+                                            // Cancelar el temporizador anterior y comenzar uno nuevo
                                             timer?.cancel()
                                             startTimer(remainingTime, currentQuestionIndex)
                                         }
@@ -255,6 +265,7 @@ class QuizActivity : ComponentActivity() {
 
                             Spacer(modifier = Modifier.weight(1f)) // Este Spacer llenará el espacio entre las opciones y el botón "Finalizar"
 
+                            // Botón para finalizar el juego
                             Button(
                                 onClick = { finish() },
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -271,6 +282,7 @@ class QuizActivity : ComponentActivity() {
         }
     }
 
+    // Función para iniciar el temporizador
     private fun startTimer(remainingTime: MutableState<Int>, currentQuestionIndex: MutableState<Int>) {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -287,7 +299,7 @@ class QuizActivity : ComponentActivity() {
                     checkAndSaveScore(score)
                     score = 0
                 } else {
-                    // Si la pregunta no ha sido respondida, continúa con la siguiente
+                    // Si la pregunta no ha sido respondida, mostrar un diálogo con la respuesta correcta
                     val currentQuestion = questions[currentQuestionIndex.value]
                     if (!isFinishing) {
                         val builder = AlertDialog.Builder(this@QuizActivity)
@@ -295,63 +307,65 @@ class QuizActivity : ComponentActivity() {
                             .setMessage("Se acabó el tiempo para esta pregunta. La respuesta correcta era: ${currentQuestion.correctOption}")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
+                                checkAndSaveScore(score)
                             }
-                        startActivity(Intent(this@QuizActivity, Puntuaciones::class.java))
                         builder.show()
                     }
                 }
-                // Play the TimeOver sound
+                // Reproducir el sonido de tiempo agotado
                 val timeOverSound = MediaPlayer.create(this@QuizActivity, R.raw.tiempo)
                 timeOverSound.start()
             }
         }.start()
     }
 
+    // Función para verificar y guardar la puntuación
     private fun checkAndSaveScore(score: Int) {
         Log.d("QuizActivity", "Checking and saving score")
 
-        // Retrieve the top 10 scores from Firebase
+        // Obtener los 10 mejores puntajes de Firebase
         myRef.orderByChild("score").limitToLast(10).addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val scores = dataSnapshot.children.mapNotNull { it.child("score").getValue(Int::class.java) }
                 if (scores.isEmpty() || score > scores.minOrNull()!!) {
-                    // If the current score is higher than the lowest score in the top 10, save it to Firebase
+                    // Si el puntaje actual es mayor que el puntaje más bajo en los 10 mejores, guárdelo en Firebase
                     saveScoreToFirebase(score)
                 } else {
-                    // If the score is not in the top 10, navigate to Puntuaciones activity
+                    // Si el puntaje no está en los 10 mejores, navegue a la actividad Puntuaciones
                     startActivity(Intent(this@QuizActivity, Puntuaciones::class.java))
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle possible errors.
+                // Manejar posibles errores.
             }
         })
     }
 
+    // Función para guardar la puntuación en Firebase
     private fun saveScoreToFirebase(score: Int) {
         val sdf = SimpleDateFormat("dd.MM.yyyy")
         val currentDateAndTime: String = sdf.format(Date())
 
-        // Create an AlertDialog builder
+        // Crear un constructor AlertDialog
         val builder = AlertDialog.Builder(this@QuizActivity)
         builder.setTitle("Nombre:")
 
-        // Set up the input
+        // Configurar la entrada
         val input = EditText(this@QuizActivity)
-        // Specify the type of input expected
+        // Especificar el tipo de entrada esperada
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setView(input)
 
-        // Set up the buttons
+        // Configurar los botones
         builder.setPositiveButton("OK") { dialog, _ ->
             val username = input.text.toString()
             val scoreData = mapOf("score" to score, "date" to currentDateAndTime, "user" to username)
 
-            // Save the score to Firebase
+            // Guardar el puntaje en Firebase
             myRef.push().setValue(scoreData).addOnCompleteListener {
-                // Navigate to Puntuaciones activity after the score has been saved
+                // Navegar a la actividad Puntuaciones después de que se haya guardado el puntaje
                 startActivity(Intent(this@QuizActivity, Puntuaciones::class.java))
             }
 
@@ -363,6 +377,7 @@ class QuizActivity : ComponentActivity() {
     }
 }
 
+// Definición de la clase Question
 data class Question(
     val image: Int,
     val question: String,

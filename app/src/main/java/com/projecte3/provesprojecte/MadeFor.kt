@@ -150,7 +150,7 @@ fun MadeForContent() {
             // boton para volver a MainActivity
             Row(horizontalArrangement = Arrangement.Center) {
                 Button(onClick = {
-                    context.startActivity(Intent(context, MushroomActivity::class.java))
+                    context.startActivity(Intent(context, MainActivity::class.java))
                 }) {
                     Text(text = "Volver", color = Color.White)
                 }
