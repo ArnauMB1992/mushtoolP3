@@ -56,10 +56,13 @@ android {
 
 dependencies {
 
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("androidx.compose.ui:ui:1.6.2")

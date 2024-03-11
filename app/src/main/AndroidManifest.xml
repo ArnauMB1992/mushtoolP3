@@ -25,6 +25,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProvesProjecte3"
         tools:targetApi="31">
+
+        <activity android:name=".MainActivity" android:exported="true" android:theme="@style/Theme.AppCompat">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".BackActivity"
             android:exported="false"
@@ -40,10 +48,12 @@
             android:exported="true"
             android:label="Captura"
             android:theme="@style/Theme.AppCompat.Light" />
+
         <activity android:name=".MapActivity"
             android:exported="true"
             android:label="El mapa de mis setas"
             android:theme="@style/Theme.ProvesProjecte3" />
+
         <activity
             android:name=".LearningActivity"
             android:theme="@style/Theme.ProvesProjecte3" />
@@ -61,6 +71,10 @@
         <activity
             android:name=".Puntuaciones"
             android:theme="@style/Theme.ProvesProjecte3"
+            />
+        <activity
+            android:name=".SignUpActivity"
+            android:theme="@style/Theme.AppCompat"
             />
 
         <activity
@@ -93,19 +107,6 @@
             android:name=".com.projecte3.provesprojecte.SetaDetailActivity"
             android:theme="@style/Theme.ProvesProjecte3"
             />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.ProvesProjecte3">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
 
         <activity android:name=".MushroomActivity"></activity>
         <activity android:name=".ListActivity"></activity>
