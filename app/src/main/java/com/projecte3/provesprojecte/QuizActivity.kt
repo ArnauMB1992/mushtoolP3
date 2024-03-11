@@ -233,6 +233,7 @@ class QuizActivity : ComponentActivity() {
                                             score += remainingTime.value * currentQuestion.dificultad
                                             // Reproducir el sonido correcto
                                             val correctSound = MediaPlayer.create(this@QuizActivity, R.raw.correcto)
+                                            correctSound.setOnCompletionListener { it.release() }
                                             correctSound.start()
                                             currentQuestionIndex.value++
                                             if (currentQuestionIndex.value == orderedQuestions.size) {
@@ -251,6 +252,7 @@ class QuizActivity : ComponentActivity() {
                                             score = 0
                                             // Reproducir el sonido de fin de juego
                                             val gameOverSound = MediaPlayer.create(this@QuizActivity, R.raw.gameover)
+                                            gameOverSound.setOnCompletionListener { it.release() }
                                             gameOverSound.start()
                                             // Cancelar el temporizador anterior y comenzar uno nuevo
                                             timer?.cancel()
@@ -301,19 +303,18 @@ class QuizActivity : ComponentActivity() {
                 } else {
                     // Si la pregunta no ha sido respondida, mostrar un diálogo con la respuesta correcta
                     val currentQuestion = questions[currentQuestionIndex.value]
-                    if (!isFinishing) {
-                        val builder = AlertDialog.Builder(this@QuizActivity)
-                            .setTitle("Tiempo agotado")
-                            .setMessage("Se acabó el tiempo para esta pregunta. La respuesta correcta era: ${currentQuestion.correctOption}")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                                checkAndSaveScore(score)
-                            }
-                        builder.show()
-                    }
+                    val builder = AlertDialog.Builder(this@QuizActivity)
+                        .setTitle("Tiempo agotado")
+                        .setMessage("Se acabó el tiempo para esta pregunta. La respuesta correcta era: ${currentQuestion.correctOption}")
+                        .setPositiveButton("OK") { dialog, _ ->
+                            dialog.dismiss()
+                            checkAndSaveScore(score)
+                        }
+                    builder.show()
                 }
                 // Reproducir el sonido de tiempo agotado
                 val timeOverSound = MediaPlayer.create(this@QuizActivity, R.raw.tiempo)
+                timeOverSound.setOnCompletionListener { it.release() }
                 timeOverSound.start()
             }
         }.start()
