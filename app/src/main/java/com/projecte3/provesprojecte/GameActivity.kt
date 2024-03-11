@@ -23,55 +23,55 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projecte3.provesprojecte.ui.theme.ProvesProjecte3Theme
 
-class GameActivity  : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ProvesProjecte3Theme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+class GameActivity : ComponentActivity() { // Define la clase GameActivity que extiende de ComponentActivity
+    override fun onCreate(savedInstanceState: Bundle?) { // Sobrescribe el método onCreate de la actividad
+        super.onCreate(savedInstanceState) // Llama al método onCreate de la clase base
+        setContent { // Establece el contenido de la actividad
+            ProvesProjecte3Theme { // Aplica el tema personalizado de la aplicación
+                Surface( // Crea una superficie para colocar contenido encima
+                    modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo de la superficie
+                    color = MaterialTheme.colorScheme.background // Establece el color de fondo de la superficie
                 ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Image(
-                            painter = painterResource(id = R.drawable.mush),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                    Box(modifier = Modifier.fillMaxSize()) { // Crea un contenedor Box que ocupa toda la pantalla
+                        Image( // Muestra una imagen
+                            painter = painterResource(id = R.drawable.mush), // Establece el pintor de la imagen
+                            contentDescription = null, // Descripción de contenido nula
+                            modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo de la imagen
+                            contentScale = ContentScale.Crop // Escala y recorta la imagen para que llene completamente el área del contenedor
                         )
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        Column( // Crea una columna vertical
+                            modifier = Modifier.align(Alignment.Center), // Alinea la columna al centro verticalmente
+                            horizontalAlignment = Alignment.CenterHorizontally // Alinea los elementos de la columna al centro horizontalmente
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.setapp),
-                                contentDescription = null
+                            Image( // Muestra una imagen
+                                painter = painterResource(id = R.drawable.setapp), // Establece el pintor de la imagen
+                                contentDescription = null // Descripción de contenido nula
                             )
-                            Row {
-                                Button(onClick = {
-                                    val intent = Intent(this@GameActivity, Puntuaciones::class.java)
-                                    startActivity(intent)
+                            Row { // Crea una fila horizontal
+                                Button(onClick = { // Crea un botón y establece el comportamiento al hacer clic
+                                    val intent = Intent(this@GameActivity, Puntuaciones::class.java) // Crea una intención para abrir la actividad de puntuaciones
+                                    startActivity(intent) // Inicia la actividad de puntuaciones
                                 }) {
-                                    Text(text = "PUNTUACIONES", fontSize = 24.sp)
+                                    Text(text = "PUNTUACIONES", fontSize = 24.sp) // Muestra el texto "PUNTUACIONES" en el botón con tamaño de fuente 24sp
                                 }
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Button(onClick = {
-                                    val intent = Intent(this@GameActivity, QuizActivity::class.java)
-                                    startActivity(intent)
+                                Spacer(modifier = Modifier.width(16.dp)) // Agrega un espacio horizontal de 16dp entre los botones
+                                Button(onClick = { // Crea un botón y establece el comportamiento al hacer clic
+                                    val intent = Intent(this@GameActivity, QuizActivity::class.java) // Crea una intención para abrir la actividad de juego
+                                    startActivity(intent) // Inicia la actividad de juego
                                 }) {
-                                    Text(text = "GAME", fontSize = 24.sp)
+                                    Text(text = "GAME", fontSize = 24.sp) // Muestra el texto "GAME" en el botón con tamaño de fuente 24sp
                                 }
                             }
                         }
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
+                        Box( // Crea otro contenedor Box
+                            modifier = Modifier.fillMaxSize(), // Establece el tamaño máximo del contenedor
+                            contentAlignment = Alignment.BottomCenter // Alinea el contenido en la parte inferior y centro del contenedor
                         ) {
-                            Button(onClick = {
-                                val intent = Intent(this@GameActivity, LearningActivity::class.java)
-                                startActivity(intent)
+                            Button(onClick = { // Crea un botón y establece el comportamiento al hacer clic
+                                val intent = Intent(this@GameActivity, LearningActivity::class.java) // Crea una intención para abrir la actividad de aprendizaje
+                                startActivity(intent) // Inicia la actividad de aprendizaje
                             }) {
-                                Text(text = "Volver")
+                                Text(text = "Volver") // Muestra el texto "Volver" en el botón
                             }
                         }
                     }

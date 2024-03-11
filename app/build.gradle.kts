@@ -60,6 +60,7 @@ dependencies {
     implementation("com.jakewharton.threetenabp:threetenabp:1.3.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation("com.google.firebase:firebase-auth:22.3.1")

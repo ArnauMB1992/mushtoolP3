@@ -153,60 +153,73 @@ fun LoginScreen(navController: NavController) {
     val emailState = remember { mutableStateOf(TextFieldValue()) }
     val passwordState = remember { mutableStateOf(TextFieldValue()) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Inicio de sesión",
-            style = MaterialTheme.typography.titleMedium
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.mush),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Email TextField
-        TextField(
-            value = emailState.value,
-            onValueChange = { emailState.value = it },
-            label = { Text("Email") }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
-            value = passwordState.value,
-            onValueChange = { passwordState.value = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation() // Oculta el texto de la contraseña
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Login Button
-        Button(
-            onClick = {
-                loginUser(emailState.value.text, passwordState.value.text, navController)
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Iniciar sesión")
-        }
+            Image(
+                painter = painterResource(id = R.drawable.setapp),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = "Inicio de sesión",
+                style = MaterialTheme.typography.titleMedium
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Sign Up Button
-        val context = LocalContext.current // Obtén el Context actual
-        Button(
-            onClick = {
-                // Crea un Intent para iniciar SignUpActivity
-                val intent = Intent(context, SignUpActivity::class.java)
-                // Usa el Context para llamar a startActivity()
-                context.startActivity(intent)
+            // Email TextField
+            TextField(
+                value = emailState.value,
+                onValueChange = { emailState.value = it },
+                label = { Text("Email") }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = passwordState.value,
+                onValueChange = { passwordState.value = it },
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation() // Oculta el texto de la contraseña
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Login Button
+            Button(
+                onClick = {
+                    loginUser(emailState.value.text, passwordState.value.text, navController)
+                }
+            ) {
+                Text("Iniciar sesión")
             }
-        ) {
-            Text("Registrarse")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Sign Up Button
+            val context = LocalContext.current // Obtén el Context actual
+            Button(
+                onClick = {
+                    // Crea un Intent para iniciar SignUpActivity
+                    val intent = Intent(context, SignUpActivity::class.java)
+                    // Usa el Context para llamar a startActivity()
+                    context.startActivity(intent)
+                }
+            ) {
+                Text("Registrarse")
+            }
         }
     }
 }
