@@ -139,16 +139,18 @@ class QuizActivity : ComponentActivity() {
         ),
     )
 
+    // Índice de pregunta actual y puntuación.
     private var currentQuestionIndex = 0
     private var score = 0
     private var timer: CountDownTimer? = null
-
+    // Separación de preguntas por dificultad y aleatorización.
     private val easyQuestions = questions.filter { it.dificultad == 1 }.shuffled()
     private val mediumQuestions = questions.filter { it.dificultad == 2 }.shuffled()
     private val hardQuestions = questions.filter { it.dificultad == 3 }.shuffled()
 
     private val orderedQuestions = easyQuestions + mediumQuestions + hardQuestions // Une las listas en el orden correcto
 
+    // Función de creación de la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -156,6 +158,7 @@ class QuizActivity : ComponentActivity() {
                 val currentQuestionIndex = remember { mutableStateOf(0) }
 
                 Box(modifier = Modifier.fillMaxSize()) {
+                    // Fondo de pantalla con imagen.
                     Image(
                         painter = painterResource(id = R.drawable.mush),
                         contentDescription = null,
@@ -295,8 +298,8 @@ class QuizActivity : ComponentActivity() {
                             .setMessage("Se acabó el tiempo para esta pregunta. La respuesta correcta era: ${currentQuestion.correctOption}")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
+                                checkAndSaveScore(score)
                             }
-                        startActivity(Intent(this@QuizActivity, Puntuaciones::class.java))
                         builder.show()
                     }
                 }
