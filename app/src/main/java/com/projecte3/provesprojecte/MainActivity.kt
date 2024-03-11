@@ -1,6 +1,7 @@
 package com.projecte3.provesprojecte
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -123,6 +124,7 @@ fun Navigation() {
 @Composable
 fun TopBar(navController: NavController) {
     val auth = FirebaseAuth.getInstance()
+    val context = LocalContext.current
 
     TopAppBar(
         title = { Text("MushTool") },
@@ -135,7 +137,10 @@ fun TopBar(navController: NavController) {
             IconButton(onClick = {
                 // Handle logout click here
                 auth.signOut()
-                navController.navigate("login_screen")
+                val intent = Intent(context, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                (context as Activity).finish()
             }) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout")
             }

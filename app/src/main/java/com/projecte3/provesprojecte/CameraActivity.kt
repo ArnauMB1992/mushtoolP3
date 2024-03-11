@@ -44,21 +44,23 @@ class CameraActivity : AppCompatActivity() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
 
         captureButton.setOnClickListener {
-            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (takePictureIntent.resolveActivity(packageManager) != null) {
-                // Check for location permissions
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
+            // Check for location permissions
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // Get the location before starting the camera intent
+                location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                if (takePictureIntent.resolveActivity(packageManager) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                } else {
-                    Toast.makeText(this, "Porfavor activa los permisos de ubicación", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Toast.makeText(this, "Porfavor activa los permisos de ubicación", Toast.LENGTH_SHORT).show()
             }
         }
 
