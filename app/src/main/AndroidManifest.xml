@@ -33,11 +33,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".BackActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main2"
-            android:theme="@style/Theme.ProvesProjecte3" />
+
         <activity
             android:name=".CameraActivity"
             android:exported="true"
@@ -103,10 +99,7 @@
             android:theme="@style/Theme.AppCompat"
             />
 
-        <activity
-            android:name=".com.projecte3.provesprojecte.SetaDetailActivity"
-            android:theme="@style/Theme.ProvesProjecte3"
-            />
+
 
         <activity android:name=".MushroomActivity"></activity>
         <activity android:name=".ListActivity"></activity>

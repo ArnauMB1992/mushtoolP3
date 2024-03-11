@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,8 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 
 class MushroomActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,20 +49,36 @@ fun MushroomScreen() {
             ),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+        Image(
+            painter = rememberImagePainter(data = R.drawable.mush),
+            contentDescription = "Background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Button(onClick = {
-                context.startActivity(Intent(context, MapActivity::class.java))
-            }) {
-                Text(text = "Mapa")
-            }
-            // boton de mostrar listado de setas guardadas llamado listado
-            Button(onClick = {
-                context.startActivity(Intent(context, ListActivity::class.java))
-            }) {
-                Text(text = "Listado")
+            Image(
+                painter = rememberImagePainter(data = R.drawable.setapp),
+                contentDescription = "App Image",
+                modifier = Modifier.offset(y = -100.dp) // Asume que 1 dp es igual a 0.025 cm
+            )
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = {
+                    context.startActivity(Intent(context, MapActivity::class.java))
+                }) {
+                    Text(text = "Mapa")
+                }
+                // boton de mostrar listado de setas guardadas llamado listado
+                Button(onClick = {
+                    context.startActivity(Intent(context, ListActivity::class.java))
+                }) {
+                    Text(text = "Listado")
+                }
             }
         }
         Box(

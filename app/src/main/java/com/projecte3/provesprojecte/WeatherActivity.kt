@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +31,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.bumptech.glide.Glide
@@ -64,15 +68,37 @@ class WeatherActivity : AppCompatActivity() {
         val location = remember { mutableStateOf("") }
         val forecast = remember { mutableStateOf(listOf<String>()) }
         val scope = rememberCoroutineScope()
+        val backgroundImage = painterResource(id = R.drawable.mush)
 
+        Image(
+            painter = backgroundImage,
+            contentDescription = null, // decorative
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop // Crop the image to fill the screen
+        )
         // Update the UI
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // Display the weather image
                 val weatherImage = when {
-                    listOf("sol", "soleado", "cla", "des").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.sunny
-                    listOf("nub", "nubes").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.nublado
-                    listOf("lluv", "lluvia", "chu").any { weatherDescription.value.lowercase(Locale("es")).contains(it) } -> R.raw.rainy
+                    listOf("sol", "soleado", "cla", "des").any {
+                        weatherDescription.value.lowercase(
+                            Locale("es")
+                        ).contains(it)
+                    } -> R.raw.sunny
+
+                    listOf("nub", "nubes").any {
+                        weatherDescription.value.lowercase(Locale("es")).contains(it)
+                    } -> R.raw.nublado
+
+                    listOf("lluv", "lluvia", "chu").any {
+                        weatherDescription.value.lowercase(
+                            Locale(
+                                "es"
+                            )
+                        ).contains(it)
+                    } -> R.raw.rainy
+
                     else -> R.raw.default_weather
                 }
 
@@ -84,20 +110,25 @@ class WeatherActivity : AppCompatActivity() {
                 TextField(
                     value = location.value,
                     onValueChange = { location.value = it },
-                    label = { Text("Introduce la ubicación") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Introduce la ubicación", color = Color.White) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(textColor = Color.White)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Descripción del clima: ${weatherDescription.value}")
+                Text(text = "Descripción del clima: ${weatherDescription.value}", color = Color.White)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Temperatura: ${temperature.value} °C")
+                Text(text = "Temperatura: ${temperature.value} °C", color = Color.White)
                 Spacer(modifier = Modifier.height(16.dp))
+
 
                 // Get the current day of the week
-                val currentDayOfWeek = LocalDate.now().dayOfWeek.getDisplayName(TextStyle.FULL, Locale("es")).capitalize(Locale("es"))
+                val currentDayOfWeek =
+                    LocalDate.now().dayOfWeek.getDisplayName(TextStyle.FULL, Locale("es"))
+                        .capitalize(Locale("es"))
 
                 // Create a list of the days of the week starting from the current day
-                val daysOfWeek = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
+                val daysOfWeek =
+                    listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo")
                 val startIndex = daysOfWeek.indexOf(currentDayOfWeek)
                 val adjustedDaysOfWeek = daysOfWeek.drop(startIndex) + daysOfWeek.take(startIndex)
 
@@ -105,24 +136,36 @@ class WeatherActivity : AppCompatActivity() {
                     for (i in 1 until 5) { // Only show the next 4 days
                         if (forecast.value.size > i) {
                             val dayForecast = forecast.value[i]
-                            Text(text = "${adjustedDaysOfWeek[i]}:\n$dayForecast")
+                            Text(
+                                text = "${adjustedDaysOfWeek[i]}:\n$dayForecast",
+                                color = Color.White
+                            )
                         } else {
-                            Text(text = "${adjustedDaysOfWeek[i]}: Cargando...")
+                            Text(
+                                text = "${adjustedDaysOfWeek[i]}: Cargando...",
+                                color = Color.White
+                            )
                         }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     val context = LocalContext.current
                     Button(onClick = {
                         if (location.value.isNotEmpty()) {
                             scope.launch {
                                 fetchWeatherData(weatherDescription, temperature, location.value)
-                                fetchForecastData(forecast, location.value) // Fetch the forecast data
+                                fetchForecastData(
+                                    forecast,
+                                    location.value
+                                ) // Fetch the forecast data
                             }
                         }
                     }, modifier = Modifier.weight(1f)) {
-                        Text("Consultar")
+                        Text("Consultar", color = Color.White)
                     }
                     Spacer(modifier = Modifier.width(16.dp)) // Agrega un espacio entre los botones
                     Button(onClick = {
@@ -134,7 +177,6 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
     }
-
     @Composable
     private fun GlideImage(data: Int, modifier: Modifier) {
         val context = LocalContext.current
