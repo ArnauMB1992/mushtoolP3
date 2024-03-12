@@ -98,7 +98,7 @@ class EmployeeDetailsActivity : AppCompatActivity() {
         val mTask = dbRef.removeValue()
 
         mTask.addOnSuccessListener {
-            Toast.makeText(this, "Seta data deleted", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Seta Borrada", Toast.LENGTH_LONG).show()
 
             val intent = Intent(this, FetchingActivity::class.java)
             finish()
@@ -159,7 +159,7 @@ class EmployeeDetailsActivity : AppCompatActivity() {
                 etEmpComun.text.toString()
             )
 
-            Toast.makeText(applicationContext, "Employee Data Updated", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, "Seta Actualizada", Toast.LENGTH_LONG).show()
 
             //we are setting updated data to our textviews
             tvEmpNombre_comun.text = etEmpNombre_comun.text.toString()
