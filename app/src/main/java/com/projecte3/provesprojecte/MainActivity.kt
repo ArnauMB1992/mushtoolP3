@@ -223,6 +223,9 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text("Registrarse")
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(onClick = { showForgotPasswordDialog = true }) {
                 Text("Olvidé mi contraseña")
             }
