@@ -314,9 +314,9 @@ class QuizActivity : ComponentActivity() {
                     builder.show()
                 }
                 // Reproducir el sonido de tiempo agotado
-                val timeOverSound = MediaPlayer.create(this@QuizActivity, R.raw.tiempo)
-                timeOverSound.setOnCompletionListener { it.release() }
-                timeOverSound.start()
+                //val timeOverSound = MediaPlayer.create(this@QuizActivity, R.raw.tiempo)
+                //timeOverSound.setOnCompletionListener { it.release() }
+                //timeOverSound.start()
             }
         }.start()
     }
