@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -152,6 +153,8 @@ fun TopBar(navController: NavController) {
 fun LoginScreen(navController: NavController) {
     val emailState = remember { mutableStateOf(TextFieldValue()) }
     val passwordState = remember { mutableStateOf(TextFieldValue()) }
+    var showForgotPasswordDialog by remember { mutableStateOf(false) }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -220,7 +223,56 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text("Registrarse")
             }
+            Button(onClick = { showForgotPasswordDialog = true }) {
+                Text("Olvidé mi contraseña")
+            }
+
+            ForgotPasswordDialog(showForgotPasswordDialog) {
+                showForgotPasswordDialog = false
+            }
         }
+    }
+}
+
+@Composable
+fun ForgotPasswordDialog(
+    showDialog: Boolean,
+    onDialogClose: () -> Unit
+) {
+    if (showDialog) {
+        val context = LocalContext.current
+        var email by remember { mutableStateOf(TextFieldValue("")) }
+        AlertDialog(
+            onDismissRequest = onDialogClose,
+            title = { Text("Restablecer contraseña") },
+            text = {
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Correo electrónico") }
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email.text)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(context, "Correo electrónico de restablecimiento de contraseña enviado.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al enviar el correo electrónico de restablecimiento de contraseña.", Toast.LENGTH_SHORT).show()
+                            }
+                            onDialogClose()
+                        }
+                }) {
+                    Text("Enviar")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDialogClose) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
